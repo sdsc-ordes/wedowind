@@ -14,7 +14,7 @@ Platforms overviewed but not explored in depth due to lack of fit:
 - [OpenML](https://www.openml.org) (proprietary datasets and workflow, compatibility issues)
 - [KNIME](https://www.knime.com) (desktop based)
 
-Platforms explored in detail with requirements: Onyxia and Renku.
+Platforms explored in detail with requirements: [Onyxia](https://datalab.sspcloud.fr/) and [Renku](https://renkulab.io/v2).
 
 | Feature                                                                                  | Onyxia | Renku |
 |------------------------------------------------------------------------------------------|--------|--------|
