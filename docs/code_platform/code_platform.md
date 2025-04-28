@@ -24,12 +24,17 @@ Github organization allow
 - team collaboration
 - branding/common namespace
 - projects, issue tracking etc.
+- assignment of moderators
 
 ### Repository templates 
 Repository templates help to standardize contributions to ensure any wedowind project/contribution contains a license, code of conduct, etc. or can be used to distribute common code elements that help to get started. They can be used on the organizational or subspace (e.g. challenge) level.   
 
 ### Sponsorship
 Github offers sponsorships for users to support their open source solutions: [Github sponsors](https://github.com/sponsors)
+
+
+### Links
+- [Open source community guidleines](https://opensource.guide/building-community/)
 
 #### __Todo__
 - [ ] Setup wedowind github organization
@@ -38,3 +43,4 @@ Github offers sponsorships for users to support their open source solutions: [Gi
   - [ ] Add contribution guidelines
   - [ ] Add  default license
   - [ ] Add issue/PR templates  # is this needed?
+- [ ] assign moderators
