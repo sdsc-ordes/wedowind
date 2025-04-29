@@ -44,6 +44,7 @@ Platforms explored in detail with requirements: [Onyxia](https://datalab.sspclou
 | Code Notebooks integration (Jupyter etc)                                                |   Yes     |    Yes    | 
 | Integration of workflow language(s) for code execution                                  |   Yes     |    Yes   | 
 | GitHub or GitLab Integration                                                            |   Yes     |    Yes (both)    |
+| Workflow managers                                                            |   Yes     |    Not at the moment   |
 | **Compute**                                                                              |        |        |
 | Possibility to execute lightweight code (e.g. 2CPUs, 8GB RAM), directly on the platform |  Yes      |   Yes (Free Tier is probably sufficient)     |
 | Possibility to set up external HPC usage                                               |   No     |    Work ongoing. *HPC    |
