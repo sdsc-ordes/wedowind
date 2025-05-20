@@ -2,7 +2,11 @@
 
 ## Intended Usage
 
-Purpose: Publishing and accessing code.
+Purpose:
+
+- publishing code in a standardized manner
+- accessing code
+- sharing code as a community
 
 ## Requirements
 
@@ -20,7 +24,8 @@ Purpose: Publishing and accessing code.
 ### Github organization
 
 [Github community tools and guidelines](https://docs.github.com/en/communities)
-Github organization allow
+Github organization allow:
+
 - team collaboration
 - branding/common namespace
 - projects, issue tracking etc.
@@ -35,6 +40,7 @@ Repository templates help to standardize contributions to ensure any wedowind pr
 In the form of a markdown repository, with the main branch protected. Only moderators of the organization can edit these.
 
 - [ ] Code of conduct
+- [ ] [Guidelines for structuring an open-source repository](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/chapters/dev-practice/repository-guideline/oss-repo)
 - [ ] Guidelines for versioning code (through releases and tags)
 - [ ] Kaggle guidelines that explain the usage of the repository template (detailed below). These Kaggle guidelines would then be used in every challenge
 
@@ -44,8 +50,8 @@ In the form of a markdown repository, with the main branch protected. Only moder
 
 **Documentation related**:
 
-- [ ] README referencing the general code of conduct and contribution guidelines
-- [ ] Choose default license
+- [ ] template README, notably referencing the general code of conduct and contribution guidelines
+- [ ] Choose default license (link coming soon)
 - [ ] Under docs: contribution guidelines for good practices on how to contribute to a code repository as an external
 
 **CI related (CI = Github Action)**:
