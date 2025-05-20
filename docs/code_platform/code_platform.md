@@ -68,8 +68,9 @@ In the form of a markdown repository, with the main branch protected. Only moder
 - [ ] CI / Code snippets for uploading / downloading from Zenodo / other DB
 - [ ] CI / Code snippet for integrating to RDF DB
 
-
 **Template USAGE**: once the template is defined, for each Kaggle competition, any Kaggle challenge participant would be able to fork from it to start there challenge code.
+
+**Side-note** : Not all components may be compatible with the Renku platform, as it relies on running on docker. A Renku specific repository template (probably a simplified version of the one detailed above) may need to be created for the challenges running on the data science platform.
 
 ### Sponsorship
 
