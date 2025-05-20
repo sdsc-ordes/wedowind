@@ -19,7 +19,7 @@ Purpose: Publishing and accessing code.
 
 ### Github organization
 
-[Github community tools and guidelines](https://docs.github.com/en/communities))
+[Github community tools and guidelines](https://docs.github.com/en/communities)
 Github organization allow
 - team collaboration
 - branding/common namespace
@@ -27,20 +27,62 @@ Github organization allow
 - assignment of moderators
 
 ### Repository templates 
-Repository templates help to standardize contributions to ensure any wedowind project/contribution contains a license, code of conduct, etc. or can be used to distribute common code elements that help to get started. They can be used on the organizational or subspace (e.g. challenge) level.   
+
+Repository templates help to standardize contributions to ensure any wedowind project/contribution contains a license, code of conduct, etc. or can be used to distribute common code elements that help to get started. They can be used on the organizational or subspace (e.g. challenge) level.
+
+#### Github Organization Documentation Repository
+
+In the form of a markdown repository, with the main branch protected. Only moderators of the organization can edit these.
+
+- [ ] Code of conduct
+- [ ] Guidelines for versioning code (through releases and tags)
+- [ ] Kaggle guidelines that explain the usage of the repository template (detailed below). These Kaggle guidelines would then be used in every challenge
+
+#### Suggested components for the repository template (inside 1 repository)
+
+- [ ] The core would be a fork from the [best practice repository template](https://github.com/sdsc-ordes/repository-template) developed by SDSC ORDES team (intended usage mainly for the python version, but accomodating for other coding languages as well.)
+
+**Documentation related**:
+
+- [ ] README referencing the general code of conduct and contribution guidelines
+- [ ] Choose default license
+- [ ] Under docs: contribution guidelines for good practices on how to contribute to a code repository as an external
+
+**CI related (CI = Github Action)**:
+
+- [ ] CI for deploying mkdocs for a project
+- [ ] CI for building a docker image for the project (with main librairies pre-installed)
+
+**Code review and issues related**:
+
+- [ ] Add issue/PR templates  # is this needed
+
+**Hugging Face Related**:
+
+- [ ] README formatting for Hugging Face
+- [ ] CI for publishing to a WeDoWind Hugging Face Space
+- [ ] Code snippets for accessing a Hugging Face model for inference, for accessing a Hugging Face Dataset
+
+**Data Integration Related**:
+
+- [ ] CI / Code snippets for uploading / downloading from Zenodo / other DB
+- [ ] CI / Code snippet for integrating to RDF DB
+
+
+**Template USAGE**: once the template is defined, for each Kaggle competition, any Kaggle challenge participant would be able to fork from it to start there challenge code.
 
 ### Sponsorship
+
 Github offers sponsorships for users to support their open source solutions: [Github sponsors](https://github.com/sponsors)
 
 
 ### Links
+
 - [Open source community guidleines](https://opensource.guide/building-community/)
 
-#### __Todo__
+#### Todo
+
 - [ ] Setup wedowind github organization
-- [ ] Add project templates
-  - [ ] Add code of conduct
-  - [ ] Add contribution guidelines
-  - [ ] Add  default license
-  - [ ] Add issue/PR templates  # is this needed?
-- [ ] assign moderators
+- [ ] Define repository template
+- [ ] Assign moderators
+- [ ] Write Kaggle challenge guidelines which use the repository guidelines
