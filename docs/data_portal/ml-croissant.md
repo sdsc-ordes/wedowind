@@ -45,14 +45,23 @@ Provides a general mechanism to attach semantics to data by linking to known voc
 
 
 ## Tooling
- [Python library](https://github.com/mlcommons/croissant/tree/main/python/mlcroissant):
+### [Python library](https://github.com/mlcommons/croissant/tree/main/python/mlcroissant):
 - Programmatically write your JSON-LD Croissant files.
 - Verify your JSON-LD Croissant files.
 -  Load data from Croissant datasets.
 
-[Croissant editor](https://huggingface.co/spaces/MLCommons/croissant-editor):
+#### Examples:
+- [Introduction](https://github.com/mlcommons/croissant/blob/main/python/mlcroissant/recipes/introduction.ipynb) on how to generate a **Croissant JSON-LD** file describing the dataset, verify it's content and yield data from it
+- [TensorFlow workflow](https://github.com/mlcommons/croissant/blob/main/python/mlcroissant/recipes/tfds_croissant_builder.ipynb): Download a Croissant file from **Hugging face**, build a **TensorFlow Datasets** using `CroissantBuilder` and train a model from it.
+- [Pytorch workflow](https://github.com/mlcommons/croissant/blob/main/python/mlcroissant/recipes/flores200_datapipes.ipynb): Generate a PyTorch DataPipe for loading data from a croissant file and define data and model with Pytorch.
+- [Bounding boxes with mlcroissant](https://github.com/mlcommons/croissant/blob/main/python/mlcroissant/recipes/bounding-boxes.ipynb): Example on how to specify bounding boxes in Croissant through the `mlcroissant` library
+
+
+### [Croissant editor](https://huggingface.co/spaces/MLCommons/croissant-editor):
 - Inspect, create or modify croissant descriptions.
 - auto-derive metadata for fine-tuning.
 
-[`CroissantBuilder()`](https://www.tensorflow.org/datasets/format_specific_dataset_builders#croissantbuilder): 
+### [`CroissantBuilder()`](https://www.tensorflow.org/datasets/format_specific_dataset_builders#croissantbuilder): 
 - generate [TensorFlow datasets](https://www.tensorflow.org/datasets/overview) from Croissant format.
+
+
