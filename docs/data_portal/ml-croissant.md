@@ -57,9 +57,11 @@ Provides a general mechanism to attach semantics to data by linking to known voc
 - [Bounding boxes with mlcroissant](https://github.com/mlcommons/croissant/blob/main/python/mlcroissant/recipes/bounding-boxes.ipynb): Example on how to specify bounding boxes in Croissant through the `mlcroissant` library
 
 
-### [Croissant editor](https://huggingface.co/spaces/MLCommons/croissant-editor):
+### [Huggingface Croissant editor](https://huggingface.co/spaces/MLCommons/croissant-editor):
 - Inspect, create or modify croissant descriptions.
 - auto-derive metadata for fine-tuning.
+
+**NOTE**: You can also upload a croissant json-ld file together with the dataset using the huggingface python api by including the croissant json-ld file into the dataset folder.
 
 ### [`CroissantBuilder()`](https://www.tensorflow.org/datasets/format_specific_dataset_builders#croissantbuilder): 
 - generate [TensorFlow datasets](https://www.tensorflow.org/datasets/overview) from Croissant format.
