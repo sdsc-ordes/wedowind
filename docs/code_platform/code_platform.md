@@ -37,7 +37,7 @@ Repository templates help to standardize contributions to ensure any wedowind pr
 
 #### Github Organization Documentation Repository
 
-In the form of a markdown repository, with the main branch protected. Only moderators of the organization can edit these.
+In the form of a markdown repository, with the main branch protected. Only moderators of the organization can edit these. See [WeDoWind organization](https://github.com/WeDoWind).
 
 - [ ] Code of conduct
 - [ ] [Guidelines for structuring an open-source repository](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/chapters/dev-practice/repository-guideline/oss-repo)
