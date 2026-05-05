@@ -2,11 +2,11 @@
   "@context": "https://databus.openenergyplatform.org/res/context.jsonld",
   "@graph": [
     {
-      "@id": "https://databus.openenergyplatform.org/wedowind/zenodo/example-artefact-one",
+      "@id": "https://databus.openenergyplatform.org/wedowind/zenodo/15471425",
       "@type": "Artifact",
-      "title": "Example artefact one",
-      "abstract": "Template artefact under `artefacts-1`. Edit title/abstract and keep `@id` consistent with group and artefact folder naming.",
-      "description": "TODO"
+      "title": "15471425",
+      "abstract": "15471425 abstract.",
+      "description": "15471425 description."
     }
   ]
 }

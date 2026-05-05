@@ -1,8 +1,7 @@
-"""``python -m databus_manager`` entrypoint."""
+"""Forward `python -m databus_manager` to `databusclient` CLI."""
 
-from __future__ import annotations
+from databusclient import run
 
-from databus_manager.cli import main
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    run()

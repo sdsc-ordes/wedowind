@@ -1,25 +1,16 @@
-name: Databus catalog sync
+name: Databus first sync and publish
 
 on:
-  push:
-    branches: [main, master]
-    paths:
-      - "catalog/**"
-      - "src/databus_manager/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/workflows/databus-publish.yml"
-  pull_request:
-    paths:
-      - "catalog/**"
-      - "src/databus_manager/**"
-      - "pyproject.toml"
-      - "uv.lock"
   workflow_dispatch:
-
-concurrency:
-  group: databus-${{ github.ref }}
-  cancel-in-progress: true
+    inputs:
+      dry_run:
+        description: "Run compare/pull/classify without changing catalog or publishing"
+        required: true
+        default: "true"
+      pull_only:
+        description: "Run discrepancy pull/update without publishing new entries"
+        required: true
+        default: "false"
 
 jobs:
   sync:
@@ -34,23 +25,17 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          # Keep in sync with .python-version
           python-version: "3.12"
 
       - name: Install dependencies
         run: uv sync --frozen
 
-      - name: Run Databus sync (dry run by default)
+      - name: Sync catalog with Databus (Databus wins)
         env:
           DATABUS_API_KEY: ${{ secrets.DATABUS_API_KEY }}
-        run: uv run python -m databus_manager --catalog catalog
-        # Template: default CLI is dry run. To attempt real registration after implementing
-        # register_* stubs, use: uv run python -m databus_manager --catalog catalog --apply
-
-      - name: Upload Databus log artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: databus-logs-${{ github.run_id }}
-          path: catalog/.databus/logs/
-          if-no-files-found: warn
+        run: |
+          DRY_ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY_ARGS="--dry-run"; fi
+          PULL_ARGS=""
+          if [ "${{ github.event.inputs.pull_only }}" = "true" ]; then PULL_ARGS="--pull-only"; fi
+          uv run python -m databus_manager.sync_catalog_with_databus $DRY_ARGS $PULL_ARGS

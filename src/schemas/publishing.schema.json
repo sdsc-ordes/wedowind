@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wedowind:publishing-ledger-entry",
+  "title": "PublishingLedgerEntry",
+  "description": "Record of a successful metadata publish to the Databus register endpoint.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the publish completed successfully (ISO 8601)."
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "URI @id of the Group, Artefact, or Version that was published."
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": ["group", "artefact", "version"],
+      "description": "Which kind of entity was published."
+    }
+  },
+  "required": ["timestamp", "entity_id", "entity_type"]
+}

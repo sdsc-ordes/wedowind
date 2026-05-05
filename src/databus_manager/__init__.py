@@ -1,9 +1,5 @@
-"""
-Template package for syncing catalog JSON-LD to the Open Energy Platform Databus.
+"""Thin wrapper around the upstream databusclient package."""
 
-Run: ``python -m databus_manager --help``
-"""
+from databusclient import run as run_databusclient
 
-__all__ = ["__version__"]
-
-__version__ = "0.1.0"
+__all__ = ["run_databusclient"]

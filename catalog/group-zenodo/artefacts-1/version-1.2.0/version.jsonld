@@ -1,0 +1,21 @@
+{
+  "@context": "https://databus.openenergyplatform.org/res/context.jsonld",
+  "@graph": [
+    {
+      "@id": "https://databus.openenergyplatform.org/wedowind/zenodo/15471425/v1.2.0",
+      "@type": "Version",
+      "title": "v1.2.0 — IPC static inverted decoupling (Zenodo 15471425)",
+      "abstract": "MATLAB data and scripts for Ocean Engineering (2025): individual pitch control with static inverted decoupling for periodic blade load reduction on monopile offshore wind turbines (Sections 4.1–4.2). Includes optimization and simulation results.",
+      "description": "Zenodo dataset associated with the manuscript on IPC with static inverted decoupling; folders \"Optimization results\" and \"Simulation results\" with .m, .mat, .fig, and spreadsheet outputs. Funding: PID2023-149181OB-I00 (MCIU/AEI/FEDER). Contact: Manuel Lara (manuel.lara@uco.es).",
+      "license": "https://dalicc.net/licenselibrary/CC-BY-4.0",
+      "distribution": [
+        {
+          "@type": "Part",
+          "formatExtension": "zip",
+          "compression": "none",
+          "downloadURL": "https://doi.org/10.5281/zenodo.15471425"
+        }
+      ]
+    }
+  ]
+}

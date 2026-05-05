@@ -5,8 +5,8 @@ description = "Research Data Infrastructure for the WeDoWind community"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "httpx>=0.27.0",
-    "jsonschema>=4.22.0",
+    "databusclient>=0.15",
+    "jsonschema>=4.23",
 ]
 
 [build-system]
@@ -15,3 +15,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/databus_manager"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/schemas" = "databus_manager/schemas"
