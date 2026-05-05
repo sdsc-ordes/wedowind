@@ -1,0 +1,21 @@
+{
+  "@context": "https://databus.openenergyplatform.org/res/context.jsonld",
+  "@graph": [
+    {
+      "@id": "https://databus.openenergyplatform.org/wedowind/zenodo/example-artefact-two/v2.0.0",
+      "@type": "Version",
+      "title": "v2.0.0 — example artefact two",
+      "abstract": "Breaking or major release placeholder — adjust semantics to match your versioning policy.",
+      "description": "TODO",
+      "license": "https://dalicc.net/licenselibrary/CC-BY-4.0",
+      "distribution": [
+        {
+          "@type": "Part",
+          "formatExtension": "txt",
+          "compression": "none",
+          "downloadURL": "https://example.org/replace-with-public-download-or-doi"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "@context": "https://databus.openenergyplatform.org/res/context.jsonld",
+  "@graph": [
+    {
+      "@id": "https://databus.openenergyplatform.org/wedowind/zenodo",
+      "@type": "Group",
+      "title": "Zenodo",
+      "abstract": "Curated metadata for WeDoWind datasets that reference Zenodo deposits. Replace this abstract with a precise description.",
+      "description": "TODO: align folder name `group-zenodo` with the `@id` path segment and your Databus account (`wedowind`)."
+    }
+  ]
+}

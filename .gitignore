@@ -1,1 +1,12 @@
+.venv
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+
+# Generated Databus run logs (download from CI artifacts or keep locally)
+catalog/.databus/logs/
