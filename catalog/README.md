@@ -1,6 +1,10 @@
 # catalog
 
-Active catalog used by Databus-first sync.
+Folder layout and JSON-LD shapes used by
+[`sync_catalog_with_databus`](../src/databus_manager/sync_catalog_with_databus.py)
+(scan → compare vs OEP Databus → classify → publish). See the [root README](../README.md)
+for the full module map (`scan_catalog`, `compare_catalog_with_databus`,
+`publish_group_metadata`, etc.).
 
 ## Structure
 
@@ -61,4 +65,12 @@ Full sync + publish:
 
 ```bash
 uv run python -m databus_manager.sync_catalog_with_databus
+```
+
+Publish a **single** version file (bypasses sync orchestration; uses
+`publish_group_metadata`):
+
+```bash
+uv run python -m databus_manager.publish_group_metadata \
+  --version-file catalog/group-zenodo/artefacts-1/version-3/version.jsonld
 ```
