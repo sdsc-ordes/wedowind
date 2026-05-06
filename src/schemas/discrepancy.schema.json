@@ -14,11 +14,11 @@
     "entity_id": {
       "type": "string",
       "minLength": 1,
-      "description": "URI @id of the Group, Artefact, or Version node."
+      "description": "URI @id of the Group, Artifact, or Version node."
     },
     "entity_type": {
       "type": "string",
-      "enum": ["group", "artefact", "version"],
+      "enum": ["group", "artifact", "version"],
       "description": "Which kind of entity the metadata applies to."
     },
     "metadata_field": {
@@ -56,7 +56,7 @@
     },
     {
       "if": {
-        "properties": { "entity_type": { "const": "artefact" } },
+        "properties": { "entity_type": { "const": "artifact" } },
         "required": ["entity_type"]
       },
       "then": {

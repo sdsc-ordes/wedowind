@@ -31,5 +31,5 @@ def version_id_to_group_id(version_id: str) -> str:
 
 
 def version_id_to_artefact_id(version_id: str) -> str:
-    """Dataset/artefact URI: version ``@id`` without the final version segment."""
+    """Artifact URI: version ``@id`` without the final version segment."""
     return version_id.rsplit("/", 1)[0]

@@ -42,7 +42,7 @@ def test_publish_builds_payload_and_posts(
 
     monkeypatch.setattr(mod.requests, "post", fake_post)
 
-    version_file = sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "version-1" / "version.jsonld"
+    version_file = sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "v1.0.0" / "version.jsonld"
     mod.publish(version_file, api_key="secret", register_url="https://example.org/register")
 
     assert captured["url"] == "https://example.org/register"

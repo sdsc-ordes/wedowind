@@ -9,7 +9,7 @@ Why this script:
 
 This script reads:
 - `catalog/<group>/group-metadata.jsonld`
-- `catalog/<group>/<artefact>/version-*/version.jsonld`
+- `catalog/<group>/<artifact-dir>/v<semver>/version.jsonld`
 
 And publishes one version to OEP `/api/register`.
 """

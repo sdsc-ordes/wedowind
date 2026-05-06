@@ -16,7 +16,7 @@ def test_sync_main_appends_logs_and_publishings(
     publishings_file = tmp_path / "publishings.jsonl"
     published: list[Path] = []
 
-    version_path = sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "version-1" / "version.jsonld"
+    version_path = sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "v1.0.0" / "version.jsonld"
 
     monkeypatch.setattr(
         "sys.argv",
@@ -46,14 +46,14 @@ def test_sync_main_appends_logs_and_publishings(
                     "version_file": str(version_path),
                     "group_file": str(sample_catalog / "group-zenodo" / "group-metadata.jsonld"),
                     "artifact_file": str(
-                        sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "artefact-metadata.jsonld"
+                        sample_catalog / "group-zenodo" / "artifact-example-artefact-one" / "artifact-metadata.jsonld"
                     ),
                     "remote_version_exists": False,
                     "remote_group_exists": False,
-                    "remote_artefact_exists": False,
+                    "remote_artifact_exists": False,
                     "version_mismatch": False,
                     "group_mismatch": False,
-                    "artefact_mismatch": False,
+                    "artifact_mismatch": False,
                     "changed_local_from_remote": False,
                     "discrepancy_entries": [
                         {

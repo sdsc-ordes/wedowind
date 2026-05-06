@@ -3,6 +3,7 @@
 from databus_manager.objects.logs import (
     DiscrepancyLogEntry,
     METADATA_FIELDS_BY_ENTITY,
+    PublishingEntityType,
     PublishingEntry,
     append_jsonl,
     ensure_metadata_field,
@@ -33,6 +34,7 @@ __all__ = [
     "DiscrepancyLogEntry",
     "GroupMetadata",
     "METADATA_FIELDS_BY_ENTITY",
+    "PublishingEntityType",
     "PublishingEntry",
     "VersionMetadata",
     "append_jsonl",

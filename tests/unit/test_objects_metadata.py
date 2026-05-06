@@ -15,12 +15,12 @@ def test_group_discrepancies_vs() -> None:
     assert rows[0].metadata_field == "abstract"
 
 
-def test_artefact_discrepancies_vs() -> None:
+def test_artifact_discrepancies_vs() -> None:
     local = ArtefactMetadata("a", "T1", "A1", "D1")
     remote = ArtefactMetadata("a", "T2", "A1", "D1")
     rows = local.discrepancies_vs(remote, timestamp="2026-01-01T00:00:00+00:00")
     assert len(rows) == 1
-    assert rows[0].entity_type == "artefact"
+    assert rows[0].entity_type == "artifact"
     assert rows[0].metadata_field == "title"
 
 

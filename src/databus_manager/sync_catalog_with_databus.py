@@ -80,7 +80,7 @@ def _path_relative_to_catalog_root(catalog_root: Path, path: Path | str) -> str:
 
 
 def _discrepancy_counts_by_entity(discrepancy_entries: list[dict[str, Any]]) -> dict[str, int]:
-    counts = {"group": 0, "artefact": 0, "version": 0}
+    counts = {"group": 0, "artifact": 0, "version": 0}
     for row in discrepancy_entries:
         et = row.get("entity_type")
         if et in counts:
@@ -89,12 +89,8 @@ def _discrepancy_counts_by_entity(discrepancy_entries: list[dict[str, Any]]) -> 
 
 
 def _version_display_from_path(version_file: Path) -> str:
-    """Folder ``version-1.2.0`` -> ``v1.2.0`` for logs."""
-    name = version_file.parent.name
-    if name.startswith("version-"):
-        rest = name[len("version-") :]
-        return rest if rest.startswith("v") else f"v{rest}"
-    return name
+    """Version directories use ``v<semver>/`` (e.g. ``v1.2.0``)."""
+    return version_file.parent.name
 
 
 def _compare_entity_line(
@@ -149,9 +145,9 @@ def _log_compare_entities(catalog_root: Path, compare_entities: list[dict[str, A
             _compare_entity_line(
                 kind="artifact",
                 display_name=artifact_folder,
-                remote_exists=bool(entity["remote_artefact_exists"]),
-                mismatch=bool(entity["artefact_mismatch"]),
-                discrepancy_n=discs["artefact"],
+                remote_exists=bool(entity["remote_artifact_exists"]),
+                mismatch=bool(entity["artifact_mismatch"]),
+                discrepancy_n=discs["artifact"],
             )
         )
         print(
@@ -212,7 +208,7 @@ def main() -> int:
     print(f"[compare] scanned versions: {scanned_versions}")
     print(
         "[compare] mismatches: "
-        f"{sum(1 for e in compare_entities if e['version_mismatch'] or e['group_mismatch'] or e['artefact_mismatch'])}"
+        f"{sum(1 for e in compare_entities if e['version_mismatch'] or e['group_mismatch'] or e['artifact_mismatch'])}"
     )
     _log_compare_entities(catalog_root, compare_entities)
 

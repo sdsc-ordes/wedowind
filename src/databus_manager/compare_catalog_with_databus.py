@@ -55,10 +55,10 @@ def get_mismatches(remote_version, remote_group, remote_artefact, local_version,
         remote_version and not local_version.equals_normalized(remote_version)
     )
     group_mismatch = bool(remote_group and not local_group.equals_normalized(remote_group))
-    artefact_mismatch = bool(
+    artifact_mismatch = bool(
         remote_artefact and not local_artefact.equals_normalized(remote_artefact)
     )
-    return version_mismatch, group_mismatch, artefact_mismatch
+    return version_mismatch, group_mismatch, artifact_mismatch
 
 
 def apply_remote_to_local(
@@ -85,7 +85,7 @@ def log_discrepancies(
     remote_version: VersionMetadata | None,
     detection_timestamp: str,
 ) -> list[dict[str, Any]]:
-    """Field-level diffs vs remote. Group/artefact when remote metadata exists; version when remote version exists."""
+    """Field-level diffs vs remote. Group/artifact when remote metadata exists; version when remote version exists."""
     discrepancy_entries: list[dict[str, Any]] = []
     for e in local_group.discrepancies_vs(remote_group, timestamp=detection_timestamp):
         discrepancy_entries.append(e.to_dict())
@@ -118,7 +118,7 @@ def compare_and_pull(
         local_group, local_artefact, local_version = get_local(entry)
         remote_version_exists, remote_version, remote_group, remote_artefact = get_remote(entry, sparql_url)
 
-        version_mismatch, group_mismatch, artefact_mismatch = get_mismatches(
+        version_mismatch, group_mismatch, artifact_mismatch = get_mismatches(
             remote_version, remote_group, remote_artefact, local_version, local_group, local_artefact
         )
 
@@ -126,7 +126,7 @@ def compare_and_pull(
         if apply_changes and (
             (remote_version and version_mismatch)
             or (remote_group and group_mismatch)
-            or (remote_artefact and artefact_mismatch)
+            or (remote_artefact and artifact_mismatch)
         ):
             apply_remote_to_local(
                 entry,
@@ -156,10 +156,10 @@ def compare_and_pull(
                 "artifact_file": str(entry.artifact_file),
                 "remote_version_exists": remote_version_exists,
                 "remote_group_exists": remote_group is not None,
-                "remote_artefact_exists": remote_artefact is not None,
+                "remote_artifact_exists": remote_artefact is not None,
                 "version_mismatch": version_mismatch,
                 "group_mismatch": group_mismatch,
-                "artefact_mismatch": artefact_mismatch,
+                "artifact_mismatch": artifact_mismatch,
                 "changed_local_from_remote": changed,
                 "discrepancy_entries": discrepancy_entries,
             }

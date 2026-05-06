@@ -18,7 +18,7 @@ from databus_manager.handle_jsonld import (
 
 @dataclass
 class CatalogVersionRef:
-    """One catalog ``version.jsonld`` plus resolved paths and URIs for group and artefact."""
+    """One catalog ``version.jsonld`` plus resolved paths and URIs for group and artifact."""
 
     version_file: Path
     group_file: Path
@@ -112,7 +112,7 @@ class GroupMetadata:
 
 @dataclass(frozen=True)
 class ArtefactMetadata:
-    """Values from ``artefact-metadata.jsonld`` Artifact node or SPARQL-backed remote."""
+    """Values from ``artifact-metadata.jsonld`` Artifact node or SPARQL-backed remote."""
 
     entity_id: str
     title: str
@@ -167,7 +167,7 @@ class ArtefactMetadata:
                 DiscrepancyLogEntry(
                     timestamp=timestamp,
                     entity_id=self.entity_id,
-                    entity_type="artefact",
+                    entity_type="artifact",
                     metadata_field=field,
                     remote_value=rv,
                     local_value=lv,

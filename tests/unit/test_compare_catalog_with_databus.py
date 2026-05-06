@@ -23,12 +23,12 @@ def test_get_mismatches_flags_only_changed_entities() -> None:
     local_ver = _version("t1")
     remote_ver = _version("t1")
 
-    version_mismatch, group_mismatch, artefact_mismatch = get_mismatches(
+    version_mismatch, group_mismatch, artifact_mismatch = get_mismatches(
         remote_ver, remote_group, remote_art, local_ver, local_group, local_art
     )
     assert version_mismatch is False
     assert group_mismatch is False
-    assert artefact_mismatch is True
+    assert artifact_mismatch is True
 
 
 def test_log_discrepancies_empty_when_no_remote_metadata() -> None:

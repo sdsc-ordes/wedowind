@@ -10,11 +10,12 @@ from typing import Any, Iterator, Literal
 import jsonschema
 from jsonschema import Draft202012Validator
 
-EntityType = Literal["group", "artefact", "version"]
+EntityType = Literal["group", "artifact", "version"]
+PublishingEntityType = Literal["version"]
 
 METADATA_FIELDS_BY_ENTITY: dict[EntityType, frozenset[str]] = {
     "group": frozenset({"title", "abstract", "description"}),
-    "artefact": frozenset({"title", "abstract", "description"}),
+    "artifact": frozenset({"title", "abstract", "description"}),
     "version": frozenset({"title", "abstract", "description", "license", "distribution"}),
 }
 
@@ -81,14 +82,17 @@ class DiscrepancyLogEntry:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> DiscrepancyLogEntry:
-        validate_discrepancy(data)
+        normalized = dict(data)
+        if normalized.get("entity_type") == "artefact":
+            normalized["entity_type"] = "artifact"
+        validate_discrepancy(normalized)
         return cls(
-            timestamp=str(data["timestamp"]),
-            entity_id=str(data["entity_id"]),
-            entity_type=data["entity_type"],  # type: ignore[arg-type]
-            metadata_field=str(data["metadata_field"]),
-            remote_value=data["remote_value"],
-            local_value=data["local_value"],
+            timestamp=str(normalized["timestamp"]),
+            entity_id=str(normalized["entity_id"]),
+            entity_type=normalized["entity_type"],  # type: ignore[arg-type]
+            metadata_field=str(normalized["metadata_field"]),
+            remote_value=normalized["remote_value"],
+            local_value=normalized["local_value"],
         )
 
 
@@ -96,7 +100,7 @@ class DiscrepancyLogEntry:
 class PublishingEntry:
     timestamp: str
     entity_id: str
-    entity_type: EntityType
+    entity_type: PublishingEntityType
 
     def __post_init__(self) -> None:
         validate_publishing(self.to_dict())
@@ -114,7 +118,7 @@ class PublishingEntry:
         return cls(
             timestamp=str(data["timestamp"]),
             entity_id=str(data["entity_id"]),
-            entity_type=data["entity_type"],  # type: ignore[arg-type]
+            entity_type="version",
         )
 
 

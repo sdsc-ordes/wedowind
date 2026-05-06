@@ -19,8 +19,8 @@ def _write_json(path: Path, payload: dict) -> None:
 def sample_catalog(tmp_path: Path) -> Path:
     catalog = tmp_path / "catalog"
     group_dir = catalog / "group-zenodo"
-    artefact_dir = group_dir / "artifact-example-artefact-one"
-    version_dir = artefact_dir / "version-1"
+    artifact_dir = group_dir / "artifact-example-artefact-one"
+    version_dir = artifact_dir / "v1.0.0"
 
     _write_json(
         group_dir / "group-metadata.jsonld",
@@ -38,7 +38,7 @@ def sample_catalog(tmp_path: Path) -> Path:
         },
     )
     _write_json(
-        artefact_dir / "artefact-metadata.jsonld",
+        artifact_dir / "artifact-metadata.jsonld",
         {
             "@context": "https://databus.openenergyplatform.org/res/context.jsonld",
             "@graph": [
