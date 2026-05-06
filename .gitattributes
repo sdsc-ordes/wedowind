@@ -1,0 +1,2 @@
+# Append-only JSONL logs (large over time; store pointer files in git, blobs in LFS).
+catalog/logs/*.jsonl filter=lfs diff=lfs merge=lfs -text

@@ -12,6 +12,7 @@ Research Data Infrastructure for the WeDoWind community.
   - [Runs via GitHub Actions](#runs-via-github-actions)
 - [Entrypoints (`databus_manager`)](#entrypoints-databus_manager)
 - [Logs (JSON Schema)](#logs-json-schema)
+- [Git LFS (catalog logs)](#git-lfs-catalog-logs)
 - [Test set](#test-set)
 - [Catalog](#catalog)
 
@@ -127,6 +128,20 @@ Default append-only JSONL paths (override with CLI flags on sync):
 
 - [`catalog/logs/discrepancies.jsonl`](catalog/logs/discrepancies.jsonl)
 - [`catalog/logs/publishings.jsonl`](catalog/logs/publishings.jsonl)
+
+### Git LFS (catalog logs)
+
+[`catalog/logs/*.jsonl`](catalog/logs/) is tracked with **[Git LFS](https://git-lfs.com/)** via [`.gitattributes`](.gitattributes) so large append-only logs do not bloat the main Git object database.
+
+One-time setup per machine:
+
+```bash
+git lfs install
+```
+
+Clone/checkout then pulls real file contents when LFS is installed; without `git-lfs`, you only see small pointer stubs.
+
+If these files were already committed as normal Git blobs before LFS, migrate history once (team coordination required) or re-add the paths after `git lfs install` so Git replaces them with LFS objects.
 
 ## Test set
 
