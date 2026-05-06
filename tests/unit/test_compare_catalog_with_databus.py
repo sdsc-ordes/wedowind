@@ -31,11 +31,30 @@ def test_get_mismatches_flags_only_changed_entities() -> None:
     assert artefact_mismatch is True
 
 
-def test_log_discrepancies_empty_if_not_exists() -> None:
+def test_log_discrepancies_empty_when_no_remote_metadata() -> None:
     local_group = GroupMetadata("g", "t1", "a", "d")
     local_art = ArtefactMetadata("a", "t1", "a", "d")
     local_ver = _version("t1")
     rows = log_discrepancies(
-        False, local_group, None, local_art, None, local_ver, None, "2026-01-01T00:00:00+00:00"
+        local_group, None, local_art, None, local_ver, None, "2026-01-01T00:00:00+00:00"
     )
     assert rows == []
+
+
+def test_log_discrepancies_group_even_when_version_remote_missing() -> None:
+    local_group = GroupMetadata("g", "local_title", "a", "d")
+    remote_group = GroupMetadata("g", "remote_title", "a", "d")
+    local_art = ArtefactMetadata("a", "t1", "a", "d")
+    local_ver = _version("t1")
+    rows = log_discrepancies(
+        local_group,
+        remote_group,
+        local_art,
+        None,
+        local_ver,
+        None,
+        "2026-01-01T00:00:00+00:00",
+    )
+    assert len(rows) >= 1
+    assert rows[0]["entity_type"] == "group"
+    assert rows[0]["metadata_field"] == "title"

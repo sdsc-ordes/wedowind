@@ -31,6 +31,15 @@ DEFAULT_CONTEXT = "https://databus.openenergyplatform.org/res/context.jsonld"
 DEFAULT_REGISTER_URL = "https://databus.openenergyplatform.org/api/register"
 
 
+class RegisterPublishError(Exception):
+    """Register endpoint returned a non-success status (response body often contains SHACL errors)."""
+
+    def __init__(self, status_code: int, response_text: str) -> None:
+        self.status_code = status_code
+        self.response_text = response_text
+        super().__init__(f"HTTP {status_code}")
+
+
 def _graph_node(doc: dict[str, Any], expected_type: str) -> dict[str, Any]:
     try:
         return get_graph_node(doc, expected_type)
@@ -83,9 +92,9 @@ def publish(version_file: Path, api_key: str, register_url: str) -> None:
     distributions = build_distributions(version_node)
     dataset = create_dataset(
         version_id=version_node["@id"],
-        artifact_version_title=version_node["title"],
-        artifact_version_abstract=version_node["abstract"],
-        artifact_version_description=version_node.get("description") or "NA",
+        title=version_node["title"],
+        abstract=version_node["abstract"],
+        description=version_node.get("description") or "NA",
         license_url=version_node["license"],
         distributions=distributions,
         group_title=group_node["title"],
@@ -100,7 +109,8 @@ def publish(version_file: Path, api_key: str, register_url: str) -> None:
         headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
         timeout=120,
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        raise RegisterPublishError(resp.status_code, resp.text)
 
 
 def main() -> int:
@@ -115,8 +125,13 @@ def main() -> int:
     if not version_path.is_file():
         raise SystemExit(f"Version file not found: {version_path}")
 
-    publish(version_path, api_key, args.register_url)
-    print(f"Published: {version_path}")
+    try:
+        publish(version_path, api_key, args.register_url)
+    except RegisterPublishError as err:
+        print(f"[publish] failed: {version_path}", flush=True)
+        print(err.response_text, flush=True)
+        raise SystemExit(1) from err
+    print(f"[publish] published: {version_path}")
     return 0
 
 

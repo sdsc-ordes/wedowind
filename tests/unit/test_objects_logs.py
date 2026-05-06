@@ -7,11 +7,11 @@ import pytest
 
 from databus_manager.objects.logs import (
     DiscrepancyLogEntry,
-    PublishingLedgerEntry,
+    PublishingEntry,
     append_jsonl,
     iter_discrepancy_log,
-    iter_publishing_ledger,
-    publishing_ledger_index_by_entity_id,
+    iter_publishings,
+    publishings_index_by_entity_id,
 )
 
 
@@ -57,15 +57,15 @@ def test_iterators_skip_bad_lines_and_parse_legacy(tmp_path: Path) -> None:
     rows = list(iter_discrepancy_log(discrepancy_path))
     assert len(rows) == 1
 
-    ledger_path = tmp_path / "ledger.jsonl"
-    append_jsonl(ledger_path, {"ts": "2026-01-01T00:00:00+00:00", "version_id": "v1"})
+    publishings_path = tmp_path / "publishings.jsonl"
+    append_jsonl(publishings_path, {"ts": "2026-01-01T00:00:00+00:00", "version_id": "v1"})
     append_jsonl(
-        ledger_path,
-        PublishingLedgerEntry(
+        publishings_path,
+        PublishingEntry(
             timestamp="2026-01-02T00:00:00+00:00", entity_id="v2", entity_type="version"
         ).to_dict(),
     )
-    parsed = list(iter_publishing_ledger(ledger_path))
+    parsed = list(iter_publishings(publishings_path))
     assert {x.entity_id for x in parsed} == {"v1", "v2"}
-    index = publishing_ledger_index_by_entity_id(ledger_path)
+    index = publishings_index_by_entity_id(publishings_path)
     assert set(index.keys()) == {"v1", "v2"}

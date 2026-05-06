@@ -13,13 +13,13 @@ def build_sync_catalog_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Sync catalog with Databus before publish.")
     parser.add_argument("--catalog", default="catalog", help="Catalog root directory.")
     parser.add_argument(
-        "--ledger",
-        default="catalog/.databus/publish_ledger.jsonl",
-        help="Local publish ledger JSONL (schema: publishing.schema.json).",
+        "--publishings",
+        default="catalog/logs/publishings.jsonl",
+        help="Append-only publishings JSONL (schema: publishing.schema.json).",
     )
     parser.add_argument(
         "--discrepancy-log",
-        default="catalog/.databus/discrepancies.jsonl",
+        default="catalog/logs/discrepancies.jsonl",
         help="Append field-level discrepancy records JSONL (schema: discrepancy.schema.json).",
     )
     parser.add_argument("--sparql-url", default=SPARQL_URL_DEFAULT, help="SPARQL endpoint URL.")

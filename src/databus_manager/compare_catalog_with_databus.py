@@ -16,8 +16,8 @@ from databus_manager.objects.metadata import (
 from databus_manager.scan_catalog import scan_catalog
 
 from databus_manager.sparql import (
-    SPARQL_URL_DEFAULT, 
-    sparql_remote_version_exists
+    SPARQL_URL_DEFAULT,
+    sparql_remote_version_exists,
 )
 
 from databus_manager.fetch_remote import (
@@ -30,22 +30,25 @@ from databus_manager.fetch_remote import (
     _optional_metadata_version,
 )
 
+
 def get_local(entry):
     local_group = GroupMetadata.from_jsonld_file(entry.group_file)
     local_artefact = ArtefactMetadata.from_jsonld_file(entry.artifact_file)
     local_version = VersionMetadata.from_jsonld_file(entry.version_file)
     return local_group, local_artefact, local_version
 
+
 def get_remote(entry, sparql_url):
-    exists = sparql_remote_version_exists(entry.version_id, sparql_url)
-    raw_version = fetch_remote_version(entry.version_id, sparql_url) if exists else None
-    raw_group = fetch_remote_group(entry.group_id, sparql_url) if exists else None
-    raw_artefact = fetch_remote_artefact(entry.artifact_id, sparql_url) if exists else None
+    remote_version_exists = sparql_remote_version_exists(entry.version_id, sparql_url)
+    raw_version = fetch_remote_version(entry.version_id, sparql_url) if remote_version_exists else None
+    raw_group = fetch_remote_group(entry.group_id, sparql_url)
+    raw_artefact = fetch_remote_artefact(entry.artifact_id, sparql_url)
 
     remote_version = _optional_metadata_version(raw_version, entry.version_id)
     remote_group = _optional_metadata_group(raw_group, entry.group_id)
     remote_artefact = _optional_metadata_artefact(raw_artefact, entry.artifact_id)
-    return exists, remote_version, remote_group, remote_artefact
+    return remote_version_exists, remote_version, remote_group, remote_artefact
+
 
 def get_mismatches(remote_version, remote_group, remote_artefact, local_version, local_group, local_artefact):
     version_mismatch = bool(
@@ -56,6 +59,7 @@ def get_mismatches(remote_version, remote_group, remote_artefact, local_version,
         remote_artefact and not local_artefact.equals_normalized(remote_artefact)
     )
     return version_mismatch, group_mismatch, artefact_mismatch
+
 
 def apply_remote_to_local(
     entry: CatalogVersionRef,
@@ -71,16 +75,26 @@ def apply_remote_to_local(
     if remote_artefact:
         ArtefactMetadata.write_remote_to_file(entry.artifact_file, remote_artefact)
 
-def log_discrepancies(exists, local_group, remote_group, local_artefact, remote_artefact, local_version, remote_version, detection_timestamp):
+
+def log_discrepancies(
+    local_group: GroupMetadata,
+    remote_group: GroupMetadata | None,
+    local_artefact: ArtefactMetadata,
+    remote_artefact: ArtefactMetadata | None,
+    local_version: VersionMetadata,
+    remote_version: VersionMetadata | None,
+    detection_timestamp: str,
+) -> list[dict[str, Any]]:
+    """Field-level diffs vs remote. Group/artefact when remote metadata exists; version when remote version exists."""
     discrepancy_entries: list[dict[str, Any]] = []
-    if exists:
-        for e in local_group.discrepancies_vs(remote_group, timestamp=detection_timestamp):
-            discrepancy_entries.append(e.to_dict())
-        for e in local_artefact.discrepancies_vs(remote_artefact, timestamp=detection_timestamp):
-            discrepancy_entries.append(e.to_dict())
-        for e in local_version.discrepancies_vs(remote_version, timestamp=detection_timestamp):
-            discrepancy_entries.append(e.to_dict())
+    for e in local_group.discrepancies_vs(remote_group, timestamp=detection_timestamp):
+        discrepancy_entries.append(e.to_dict())
+    for e in local_artefact.discrepancies_vs(remote_artefact, timestamp=detection_timestamp):
+        discrepancy_entries.append(e.to_dict())
+    for e in local_version.discrepancies_vs(remote_version, timestamp=detection_timestamp):
+        discrepancy_entries.append(e.to_dict())
     return discrepancy_entries
+
 
 def compare_and_pull(
     catalog_root: Path,
@@ -88,24 +102,32 @@ def compare_and_pull(
     sparql_url: str = SPARQL_URL_DEFAULT,
     apply_changes: bool = False,
     detection_timestamp: str | None = None,
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], list[CatalogVersionRef]]:
     """
     Compare local catalog with remote metadata.
 
-    Returns one record per version with discrepancy flags and remote existence.
+    Returns ``(results, scanned)``: one compare record per discovered version, plus the
+    ``CatalogVersionRef`` list from the same catalog scan (use for classify without
+    rescanning). Pull may update JSON-LD files after ``scanned`` was built; version
+    ``@id`` values are unchanged so refs remain valid for SPARQL classify checks.
     """
     detection_timestamp = _coalesce_detection_timestamp(detection_timestamp)
+    scanned = scan_catalog(catalog_root)
     results: list[dict[str, Any]] = []
-    for entry in scan_catalog(catalog_root):
+    for entry in scanned:
         local_group, local_artefact, local_version = get_local(entry)
-        exists, remote_version, remote_group, remote_artefact = get_remote(entry, sparql_url)
+        remote_version_exists, remote_version, remote_group, remote_artefact = get_remote(entry, sparql_url)
 
         version_mismatch, group_mismatch, artefact_mismatch = get_mismatches(
             remote_version, remote_group, remote_artefact, local_version, local_group, local_artefact
         )
 
         changed = False
-        if apply_changes and exists and (version_mismatch or group_mismatch or artefact_mismatch):
+        if apply_changes and (
+            (remote_version and version_mismatch)
+            or (remote_group and group_mismatch)
+            or (remote_artefact and artefact_mismatch)
+        ):
             apply_remote_to_local(
                 entry,
                 remote_version=remote_version,
@@ -114,8 +136,15 @@ def compare_and_pull(
             )
             changed = True
 
-        discrepancy_entries = log_discrepancies(exists, local_group, remote_group, local_artefact, remote_artefact, local_version, remote_version, detection_timestamp)
-        
+        discrepancy_entries = log_discrepancies(
+            local_group,
+            remote_group,
+            local_artefact,
+            remote_artefact,
+            local_version,
+            remote_version,
+            detection_timestamp,
+        )
 
         results.append(
             {
@@ -125,7 +154,9 @@ def compare_and_pull(
                 "version_file": str(entry.version_file),
                 "group_file": str(entry.group_file),
                 "artifact_file": str(entry.artifact_file),
-                "remote_exists": exists,
+                "remote_version_exists": remote_version_exists,
+                "remote_group_exists": remote_group is not None,
+                "remote_artefact_exists": remote_artefact is not None,
                 "version_mismatch": version_mismatch,
                 "group_mismatch": group_mismatch,
                 "artefact_mismatch": artefact_mismatch,
@@ -133,4 +164,4 @@ def compare_and_pull(
                 "discrepancy_entries": discrepancy_entries,
             }
         )
-    return results
+    return results, scanned

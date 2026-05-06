@@ -1,4 +1,4 @@
-"""JSON-schema-backed log entries for discrepancy and publishing ledger JSONL files."""
+"""JSON-schema-backed log entries for discrepancy and publishings JSONL files."""
 
 from __future__ import annotations
 
@@ -93,7 +93,7 @@ class DiscrepancyLogEntry:
 
 
 @dataclass(frozen=True)
-class PublishingLedgerEntry:
+class PublishingEntry:
     timestamp: str
     entity_id: str
     entity_type: EntityType
@@ -109,7 +109,7 @@ class PublishingLedgerEntry:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> PublishingLedgerEntry:
+    def from_dict(cls, data: dict[str, Any]) -> PublishingEntry:
         validate_publishing(data)
         return cls(
             timestamp=str(data["timestamp"]),
@@ -144,7 +144,7 @@ def iter_discrepancy_log(path: Path) -> Iterator[DiscrepancyLogEntry]:
             continue
 
 
-def iter_publishing_ledger(path: Path) -> Iterator[PublishingLedgerEntry]:
+def iter_publishings(path: Path) -> Iterator[PublishingEntry]:
     if not path.is_file():
         yield from ()
         return
@@ -158,14 +158,14 @@ def iter_publishing_ledger(path: Path) -> Iterator[PublishingLedgerEntry]:
             continue
         if not isinstance(data, dict):
             continue
-        entry = _parse_publishing_row(data)
+        entry = _parse_publishings_row(data)
         if entry is not None:
             yield entry
 
 
-def _parse_publishing_row(data: dict[str, Any]) -> PublishingLedgerEntry | None:
+def _parse_publishings_row(data: dict[str, Any]) -> PublishingEntry | None:
     if "entity_id" in data and "entity_type" in data and "timestamp" in data:
-        return PublishingLedgerEntry.from_dict(data)
+        return PublishingEntry.from_dict(data)
     legacy_id = data.get("version_id") or data.get("entity_id")
     if not legacy_id:
         return None
@@ -177,11 +177,11 @@ def _parse_publishing_row(data: dict[str, Any]) -> PublishingLedgerEntry | None:
         "entity_id": str(legacy_id),
         "entity_type": "version",
     }
-    return PublishingLedgerEntry.from_dict(new_row)
+    return PublishingEntry.from_dict(new_row)
 
 
-def publishing_ledger_index_by_entity_id(path: Path) -> dict[str, PublishingLedgerEntry]:
-    seen: dict[str, PublishingLedgerEntry] = {}
-    for entry in iter_publishing_ledger(path):
+def publishings_index_by_entity_id(path: Path) -> dict[str, PublishingEntry]:
+    seen: dict[str, PublishingEntry] = {}
+    for entry in iter_publishings(path):
         seen[entry.entity_id] = entry
     return seen

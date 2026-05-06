@@ -21,8 +21,9 @@ def test_compare_and_pull_applies_remote_changes(
         )
 
     monkeypatch.setattr("databus_manager.compare_catalog_with_databus.get_remote", fake_get_remote)
-    results = compare_and_pull(sample_catalog, sparql_url="https://example.org/sparql", apply_changes=True)
+    results, scanned_refs = compare_and_pull(sample_catalog, sparql_url="https://example.org/sparql", apply_changes=True)
     assert len(results) == 1
+    assert len(scanned_refs) == 1
     assert results[0]["group_mismatch"] is True
     assert results[0]["changed_local_from_remote"] is True
 

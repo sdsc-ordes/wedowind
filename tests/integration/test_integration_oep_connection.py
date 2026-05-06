@@ -20,8 +20,8 @@ def test_can_connect_to_oep_register_with_env_key() -> None:
 def test_can_ping_sparql_endpoint() -> None:
     resp = requests.post(
         "https://databus.openenergyplatform.org/sparql",
-        json={"query": "ASK {}"},
-        headers={"Content-Type": "application/json", "Accept": "application/sparql-results+json"},
+        data={"query": "ASK {}"},
+        headers={"Accept": "application/sparql-results+json"},
         timeout=30,
     )
     assert resp.status_code < 500

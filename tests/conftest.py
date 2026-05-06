@@ -19,7 +19,7 @@ def _write_json(path: Path, payload: dict) -> None:
 def sample_catalog(tmp_path: Path) -> Path:
     catalog = tmp_path / "catalog"
     group_dir = catalog / "group-zenodo"
-    artefact_dir = group_dir / "artefacts-1"
+    artefact_dir = group_dir / "artifact-example-artefact-one"
     version_dir = artefact_dir / "version-1"
 
     _write_json(

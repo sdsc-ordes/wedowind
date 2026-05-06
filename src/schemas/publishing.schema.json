@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "wedowind:publishing-ledger-entry",
-  "title": "PublishingLedgerEntry",
+  "$id": "wedowind:publishing-entry",
+  "title": "PublishingEntry",
   "description": "Record of a successful metadata publish to the Databus register endpoint.",
   "type": "object",
   "additionalProperties": false,

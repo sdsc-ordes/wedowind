@@ -10,7 +10,7 @@ Dependencies are managed with **uv**:
 uv sync
 ```
 
-## Databus-first sync flow
+## Databus sync flow
 
 This repository uses a Databus-first workflow where OEP Databus is the source
 of truth before publishing:
@@ -21,17 +21,17 @@ of truth before publishing:
    differs from local files.
 3. Pull remote metadata into `catalog/` when applying changes (not `--dry-run`;
    Databus wins).
-4. Classify each catalog version as `published`, `ledger_mismatch`, or `new`
-   using the local ledger and remote existence checks.
+4. Classify each catalog version as `published`, `publishings_mismatch`, or `new`
+   using local **publishings** (JSONL) and remote existence checks.
 5. Publish only `new` versions using `databusclient` builders (with group
    metadata from `publish_group_metadata`).
-6. Append successful publishes to the publishing ledger JSONL.
+6. Append successful publishes to the publishings JSONL (`catalog/logs/publishings.jsonl` by default).
 
 ## Entrypoints (`databus_manager`)
 
 | Module | Role |
 |--------|------|
-| [`sync_catalog_with_databus.py`](src/databus_manager/sync_catalog_with_databus.py) | Orchestration: compare/pull → classify → publish new versions → ledger. |
+| [`sync_catalog_with_databus.py`](src/databus_manager/sync_catalog_with_databus.py) | Orchestration: compare/pull → classify → publish new versions → append publishings. |
 | [`publish_group_metadata.py`](src/databus_manager/publish_group_metadata.py) | Publish **one** `version.jsonld` with explicit group metadata (`create_dataset` + POST to OEP `/api/register`). |
 | [`compare_catalog_with_databus.py`](src/databus_manager/compare_catalog_with_databus.py) | Compare local catalog vs Databus and optionally write pulled metadata back into JSON-LD files. |
 
@@ -49,7 +49,7 @@ Shared pieces (keep package imports stable via [`objects/__init__.py`](src/datab
 | [`fetch_remote.py`](src/databus_manager/fetch_remote.py) | SPARQL SELECT helpers for remote group, artefact, and version metadata. |
 | [`handle_jsonld.py`](src/databus_manager/handle_jsonld.py) | Load/write JSON-LD documents and derive group / artefact URIs from a version `@id`. |
 | [`objects/metadata.py`](src/databus_manager/objects/metadata.py) | Typed **Group**, **Artefact**, and **Version** metadata objects (normalize, discrepancies, apply remote). |
-| [`objects/logs.py`](src/databus_manager/objects/logs.py) | Schema-backed **discrepancy** and **publishing** ledger rows and JSONL helpers. |
+| [`objects/logs.py`](src/databus_manager/objects/logs.py) | Schema-backed **discrepancy** and **publishings** rows and JSONL helpers. |
 
 ## Logs (JSON Schema)
 
@@ -60,8 +60,8 @@ Schemas live under [`src/schemas/`](src/schemas/):
 
 Default append-only JSONL paths (override with CLI flags on sync):
 
-- [`catalog/.databus/discrepancies.jsonl`](catalog/.databus/discrepancies.jsonl)
-- [`catalog/.databus/publish_ledger.jsonl`](catalog/.databus/publish_ledger.jsonl)
+- [`catalog/logs/discrepancies.jsonl`](catalog/logs/discrepancies.jsonl)
+- [`catalog/logs/publishings.jsonl`](catalog/logs/publishings.jsonl)
 
 ## Run locally — sync
 
@@ -85,16 +85,35 @@ uv run python -m databus_manager.sync_catalog_with_databus
 
 Use `DATABUS_API_KEY` or `--api-key` for publish steps.
 
+**Compare vs classify.** Pulling Databus metadata into `catalog/` aligns **local JSON-LD**
+with the remote store; it does **not** populate `publishings.jsonl`. So you can
+still see **`publishings_mismatch`**: the version exists on Databus (SPARQL) but there is
+no corresponding row in local publishings—for example after publishing outside this
+repo, restoring catalog from git without the logs directory, or resetting that file.
+Normal steady-state automation usually keeps publishings in sync with publishes from
+this pipeline.
+
+**SHACL / validation.** This codebase does not run SHACL locally before POSTing to
+`/api/register`. The register endpoint validates the payload; on failure, **`publish`**
+and **`sync_catalog_with_databus`** print the HTTP response body (often SHACL errors)
+to standard output under **`[publish] failed:`**.
+
 ## Run locally — publish one version
 
 ```bash
 uv run python -m databus_manager.publish_group_metadata \
-  --version-file catalog/group-zenodo/artefacts-1/version-3/version.jsonld
+  --version-file catalog/group-zenodo/artifact-15471425/version-1.2.0/version.jsonld
 ```
 
 (Same API key env var / `--api-key` as sync.)
 
-## Run tests
+## Runs via GitHub Actions
+
+[`.github/workflows/databus-publish.yml`](.github/workflows/databus-publish.yml) runs
+`python -m databus_manager.sync_catalog_with_databus` with `workflow_dispatch`
+inputs `dry_run` and `pull_only`, and secret `DATABUS_API_KEY`.
+
+## Test Set
 
 Install test dependencies first:
 
@@ -133,9 +152,3 @@ uv run pytest tests/integration/test_integration_oep_connection.py
 ## Catalog
 
 Layout and JSON-LD conventions are documented in [`catalog/README.md`](catalog/README.md).
-
-## GitHub Actions
-
-[`.github/workflows/databus-publish.yml`](.github/workflows/databus-publish.yml) runs
-`python -m databus_manager.sync_catalog_with_databus` with `workflow_dispatch`
-inputs `dry_run` and `pull_only`, and secret `DATABUS_API_KEY`.

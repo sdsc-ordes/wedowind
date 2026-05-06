@@ -3,12 +3,12 @@
 from databus_manager.objects.logs import (
     DiscrepancyLogEntry,
     METADATA_FIELDS_BY_ENTITY,
-    PublishingLedgerEntry,
+    PublishingEntry,
     append_jsonl,
     ensure_metadata_field,
     iter_discrepancy_log,
-    iter_publishing_ledger,
-    publishing_ledger_index_by_entity_id,
+    iter_publishings,
+    publishings_index_by_entity_id,
     schemas_dir,
     validate_discrepancy,
     validate_publishing,
@@ -19,7 +19,6 @@ from databus_manager.objects.metadata import (
     GroupMetadata,
     VersionMetadata,
 )
-from databus_manager.scan_catalog import scan_catalog
 from databus_manager.handle_jsonld import (
     get_graph_node,
     load_json,
@@ -34,16 +33,16 @@ __all__ = [
     "DiscrepancyLogEntry",
     "GroupMetadata",
     "METADATA_FIELDS_BY_ENTITY",
-    "PublishingLedgerEntry",
+    "PublishingEntry",
     "VersionMetadata",
     "append_jsonl",
     "scan_catalog",
     "ensure_metadata_field",
     "get_graph_node",
     "iter_discrepancy_log",
-    "iter_publishing_ledger",
+    "iter_publishings",
     "load_json",
-    "publishing_ledger_index_by_entity_id",
+    "publishings_index_by_entity_id",
     "schemas_dir",
     "validate_discrepancy",
     "validate_publishing",
@@ -51,3 +50,11 @@ __all__ = [
     "version_id_to_group_id",
     "write_json",
 ]
+
+
+def __getattr__(name: str):
+    if name == "scan_catalog":
+        from databus_manager.scan_catalog import scan_catalog as _scan_catalog
+
+        return _scan_catalog
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

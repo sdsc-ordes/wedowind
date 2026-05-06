@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from databus_manager.objects.metadata import CatalogVersionRef
-from databus_manager.objects.logs import PublishingLedgerEntry
+from databus_manager.objects.logs import PublishingEntry
 from databus_manager.sync_catalog_with_databus import classify_entries
 
 
@@ -22,11 +22,11 @@ def test_classify_entries_states(monkeypatch: pytest.MonkeyPatch, tmp_path: Path
         lambda version_id, _sparql_url: version_id in {"v1", "v2"},
     )
 
-    ledger = {
-        "v1": PublishingLedgerEntry(
+    publishings = {
+        "v1": PublishingEntry(
             timestamp="2026-01-01T00:00:00+00:00", entity_id="v1", entity_type="version"
         )
     }
-    rows = classify_entries(tmp_path, ledger_map=ledger, sparql_url="https://example.org/sparql")
-    status = {r["version_id"]: r["status"] for r in rows}
-    assert status == {"v1": "published", "v2": "ledger_mismatch", "v3": "new"}
+    entities = classify_entries(tmp_path, publishings_map=publishings, sparql_url="https://example.org/sparql")
+    status = {e["version_id"]: e["status"] for e in entities}
+    assert status == {"v1": "published", "v2": "publishings_mismatch", "v3": "new"}

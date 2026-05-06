@@ -8,8 +8,8 @@ from databus_manager.parse import build_publish_group_parser, build_sync_catalog
 def test_sync_parser_defaults() -> None:
     args = build_sync_catalog_parser().parse_args([])
     assert args.catalog == "catalog"
-    assert args.ledger.endswith("catalog/.databus/publish_ledger.jsonl")
-    assert args.discrepancy_log.endswith("catalog/.databus/discrepancies.jsonl")
+    assert args.publishings.endswith("catalog/logs/publishings.jsonl")
+    assert args.discrepancy_log.endswith("catalog/logs/discrepancies.jsonl")
     assert args.api_key is None
     assert args.dry_run is False
     assert args.pull_only is False

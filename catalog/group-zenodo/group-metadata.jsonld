@@ -4,9 +4,9 @@
     {
       "@id": "https://databus.openenergyplatform.org/wedowind/zenodo",
       "@type": "Group",
-      "title": "Zenodo",
-      "abstract": "Test local abstract.",
-      "description": "Test local description."
+      "title": "Zenodo Wind Energy",
+      "abstract": "All datasets on zenodo related to wind energy.",
+      "description": "All datasets on zenodo related to wind energy."
     }
   ]
 }

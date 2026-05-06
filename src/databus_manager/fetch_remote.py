@@ -41,12 +41,11 @@ def fetch_remote_version(version_id: str, sparql_url: str) -> dict[str, Any] | N
     SELECT ?title ?abstract ?description ?license ?downloadURL ?formatExtension ?compression
     WHERE {{
       GRAPH ?g {{
-        BIND(<{version_id}> AS ?dataset)
-        ?dataset dcat:distribution ?part .
-        OPTIONAL {{ ?dataset dct:title ?title . }}
-        OPTIONAL {{ ?dataset dct:abstract ?abstract . }}
-        OPTIONAL {{ ?dataset dct:description ?description . }}
-        OPTIONAL {{ ?dataset dct:license ?license . }}
+        <{version_id}> dcat:distribution ?part .
+        OPTIONAL {{ <{version_id}> dct:title ?title . }}
+        OPTIONAL {{ <{version_id}> dct:abstract ?abstract . }}
+        OPTIONAL {{ <{version_id}> dct:description ?description . }}
+        OPTIONAL {{ <{version_id}> dct:license ?license . }}
         OPTIONAL {{ ?part dcat:downloadURL ?downloadURL . }}
         OPTIONAL {{ ?part databus:formatExtension ?formatExtension . }}
         OPTIONAL {{ ?part databus:compression ?compression . }}
@@ -93,11 +92,10 @@ def fetch_remote_group(group_id: str, sparql_url: str) -> dict[str, Any] | None:
     SELECT ?title ?abstract ?description
     WHERE {{
       GRAPH ?g {{
-        BIND(<{group_id}> AS ?group)
-        ?group rdf:type databus:Group .
-        OPTIONAL {{ ?group dct:title ?title . }}
-        OPTIONAL {{ ?group dct:abstract ?abstract . }}
-        OPTIONAL {{ ?group dct:description ?description . }}
+        <{group_id}> rdf:type databus:Group .
+        OPTIONAL {{ <{group_id}> dct:title ?title . }}
+        OPTIONAL {{ <{group_id}> dct:abstract ?abstract . }}
+        OPTIONAL {{ <{group_id}> dct:description ?description . }}
       }}
     }}
     LIMIT 1
@@ -124,11 +122,10 @@ def fetch_remote_artefact(artefact_id: str, sparql_url: str) -> dict[str, Any] |
     SELECT ?title ?abstract ?description
     WHERE {{
       GRAPH ?g {{
-        BIND(<{artefact_id}> AS ?artefact)
-        ?artefact rdf:type databus:Artifact .
-        OPTIONAL {{ ?artefact dct:title ?title . }}
-        OPTIONAL {{ ?artefact dct:abstract ?abstract . }}
-        OPTIONAL {{ ?artefact dct:description ?description . }}
+        <{artefact_id}> rdf:type databus:Artifact .
+        OPTIONAL {{ <{artefact_id}> dct:title ?title . }}
+        OPTIONAL {{ <{artefact_id}> dct:abstract ?abstract . }}
+        OPTIONAL {{ <{artefact_id}> dct:description ?description . }}
       }}
     }}
     LIMIT 1
