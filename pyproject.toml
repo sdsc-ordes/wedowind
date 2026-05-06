@@ -7,6 +7,12 @@ requires-python = ">=3.11"
 dependencies = [
     "databusclient>=0.15",
     "jsonschema>=4.23",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
 ]
 
 [build-system]
@@ -18,3 +24,7 @@ packages = ["src/databus_manager"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "src/schemas" = "databus_manager/schemas"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

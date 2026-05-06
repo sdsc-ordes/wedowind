@@ -94,6 +94,42 @@ uv run python -m databus_manager.publish_group_metadata \
 
 (Same API key env var / `--api-key` as sync.)
 
+## Run tests
+
+Install test dependencies first:
+
+```bash
+uv sync --all-groups
+```
+
+Pytest loads a `.env` file at the repository root (via `python-dotenv`), so
+`DATABUS_API_KEY` can live there for local runs. You can still `export
+DATABUS_API_KEY=...` in the shell; that overrides `.env` when set.
+
+Run the full suite (unit + integration + OEP connectivity tests):
+
+```bash
+uv run pytest
+```
+
+Run only unit tests:
+
+```bash
+uv run pytest tests/unit
+```
+
+Run only integration tests:
+
+```bash
+uv run pytest tests/integration
+```
+
+Run only OEP connectivity tests:
+
+```bash
+uv run pytest tests/integration/test_integration_oep_connection.py
+```
+
 ## Catalog
 
 Layout and JSON-LD conventions are documented in [`catalog/README.md`](catalog/README.md).

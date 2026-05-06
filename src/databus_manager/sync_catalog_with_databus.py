@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from databus_manager.compare_catalog_with_databus import compare_and_pull
+from databus_manager.load_env import load_dotenv_if_available
 from databus_manager.sparql import sparql_remote_version_exists
 from databus_manager.objects.logs import (
     PublishingLedgerEntry,
@@ -54,6 +55,7 @@ def classify_entries(
 
 
 def main() -> int:
+    load_dotenv_if_available()
     args = build_sync_catalog_parser().parse_args()
 
     catalog_root = Path(args.catalog)

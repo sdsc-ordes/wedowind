@@ -24,6 +24,7 @@ import requests
 from databusclient.api.deploy import BadArgumentException, create_dataset, create_distribution
 
 from databus_manager.handle_jsonld import get_graph_node, load_json
+from databus_manager.load_env import load_dotenv_if_available
 from databus_manager.parse import build_publish_group_parser
 
 DEFAULT_CONTEXT = "https://databus.openenergyplatform.org/res/context.jsonld"
@@ -103,6 +104,7 @@ def publish(version_file: Path, api_key: str, register_url: str) -> None:
 
 
 def main() -> int:
+    load_dotenv_if_available()
     args = build_publish_group_parser().parse_args()
 
     api_key = args.api_key or os.getenv("DATABUS_API_KEY")

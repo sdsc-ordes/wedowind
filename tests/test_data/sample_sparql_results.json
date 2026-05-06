@@ -1,0 +1,11 @@
+{
+  "results": {
+    "bindings": [
+      {
+        "title": {"value": "Remote title"},
+        "abstract": {"value": "Remote abstract"},
+        "description": {"value": "Remote description"}
+      }
+    ]
+  }
+}
