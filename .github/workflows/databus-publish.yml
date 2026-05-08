@@ -1,22 +1,20 @@
-name: Databus first sync and publish
+name: Monthly mapper publish
 
 on:
+  schedule:
+    - cron: "0 3 1 * *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Run compare/pull/classify without changing catalog or publishing"
+        description: "Run in dry-run mode for all jobs"
         required: true
         default: "true"
-      pull_only:
-        description: "Run discrepancy pull/update without publishing new entries"
-        required: true
-        default: "false"
 
 jobs:
-  sync:
+  publish-zenodo-mapper:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,17 +30,75 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen --all-groups
 
-      - name: Run tests
-        env:
-          DATABUS_API_KEY: ${{ secrets.DATABUS_API_KEY }}
-        run: uv run pytest
-
-      - name: Sync catalog with Databus (Databus wins)
+      - name: Publish with Zenodo mapper
         env:
           DATABUS_API_KEY: ${{ secrets.DATABUS_API_KEY }}
         run: |
           DRY_ARGS=""
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY_ARGS="--dry-run"; fi
-          PULL_ARGS=""
-          if [ "${{ github.event.inputs.pull_only }}" = "true" ]; then PULL_ARGS="--pull-only"; fi
-          uv run python -m databus_manager.sync_catalog_with_databus $DRY_ARGS $PULL_ARGS
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY_ARGS="--dry-run"; fi
+          uv run python -m mappers.zenodo.publish_sources $DRY_ARGS
+
+      - name: Commit updated mapper timestamps
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/mappers/zenodo/config/timestamp.json
+          if git diff --cached --quiet; then
+            echo "No timestamp updates to commit."
+          else
+            git commit -m "chore: update zenodo mapper timestamp"
+            git push
+          fi
+
+  publish-ckan-mapper:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups
+
+      - name: Publish with CKAN mapper
+        env:
+          DATABUS_API_KEY: ${{ secrets.DATABUS_API_KEY }}
+          CKAN_URL: ${{ vars.CKAN_URL }}
+          CKAN_DATASET_ID: ${{ vars.CKAN_DATASET_ID }}
+          DATABUS_GROUP_NAME: ${{ vars.DATABUS_GROUP_NAME }}
+          DATABUS_GROUP_TITLE: ${{ vars.DATABUS_GROUP_TITLE }}
+          DATABUS_GROUP_ABSTRACT: ${{ vars.DATABUS_GROUP_ABSTRACT }}
+          DATABUS_GROUP_DESCRIPTION: ${{ vars.DATABUS_GROUP_DESCRIPTION }}
+        run: |
+          if [ -z "$CKAN_URL" ] || [ -z "$CKAN_DATASET_ID" ]; then echo "Skipping: CKAN_URL or CKAN_DATASET_ID not set."; exit 0; fi
+          DRY_ARGS=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY_ARGS="--dry-run"; fi
+          uv run python -m mappers.ckan.publish_record \
+            --ckan-url "$CKAN_URL" \
+            --dataset-id "$CKAN_DATASET_ID" \
+            --group-name "$DATABUS_GROUP_NAME" \
+            --group-title "$DATABUS_GROUP_TITLE" \
+            --group-abstract "$DATABUS_GROUP_ABSTRACT" \
+            --group-description "$DATABUS_GROUP_DESCRIPTION" \
+            $DRY_ARGS
+
+      - name: Commit updated mapper timestamps
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/mappers/ckan/config/timestamp.json
+          if git diff --cached --quiet; then
+            echo "No timestamp updates to commit."
+          else
+            git commit -m "chore: update ckan mapper timestamp"
+            git push
+          fi
