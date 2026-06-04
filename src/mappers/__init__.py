@@ -1,1 +1,1 @@
-"""Mapper modules for external source -> Databus dataset preparation/publish."""
+"""Mappers: Zenodo and CKAN sources → OEMetadata → Open Energy Platform."""

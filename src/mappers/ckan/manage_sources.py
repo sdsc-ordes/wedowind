@@ -191,7 +191,12 @@ def load_ckan_timestamp_state(
     return merged
 
 
-def save_ckan_timestamp_state(state: dict[str, Any], path: Path = DEFAULT_TIMESTAMP_PATH) -> None:
+def save_ckan_timestamp_state(
+    state: dict[str, Any],
+    path: Path = DEFAULT_TIMESTAMP_PATH,
+    *,
+    enabled: bool = True,
+) -> None:
     """Write CKAN timestamp JSON via a temp file and atomic replace.
 
     Parameters
@@ -200,11 +205,15 @@ def save_ckan_timestamp_state(state: dict[str, Any], path: Path = DEFAULT_TIMEST
         Full document to persist.
     path : pathlib.Path, optional
         Destination path (default: :data:`DEFAULT_TIMESTAMP_PATH`).
+    enabled : bool, optional
+        When ``False``, the write is skipped (default: ``True``).
 
     Returns
     -------
     None
     """
+    if not enabled:
+        return
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(state, indent=2) + "\n"

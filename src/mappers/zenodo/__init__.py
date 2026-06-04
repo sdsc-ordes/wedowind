@@ -1,1 +1,1 @@
-"""Zenodo → Databus mapper package (sources, checksums, publish CLIs)."""
+"""Zenodo → OEP mapper (API client, OEMetadata mapping, publish CLIs)."""

@@ -14,12 +14,7 @@ DEFAULT_TIMESTAMP_PATH = Path(__file__).resolve().parent / "config" / "timestamp
 
 
 class ZenodoMapperError(RuntimeError):
-    """Raised when Zenodo mapper configuration cannot be loaded or is invalid.
-
-    Notes
-    -----
-    Subclass of :exc:`RuntimeError`; carries the same attributes as the base class.
-    """
+    """Raised when Zenodo mapper configuration cannot be loaded or is invalid."""
 
 
 def _parse_sources_section(data: dict[str, Any], path: Path) -> dict[str, dict[str, str]]:
@@ -72,7 +67,7 @@ def _parse_sources_section(data: dict[str, Any], path: Path) -> dict[str, dict[s
 
 
 def load_source_config(path: Path = DEFAULT_SOURCES_PATH) -> dict[str, Any]:
-    """Load Zenodo ``sources.json``: defaults.group plus query params per source key.
+    """Load Zenodo ``sources.json``: ``defaults.oep`` plus query params per source key.
 
     Parameters
     ----------
@@ -81,13 +76,13 @@ def load_source_config(path: Path = DEFAULT_SOURCES_PATH) -> dict[str, Any]:
 
     Returns
     -------
-    dict[str, Any]
-        ``{'defaults': {'group': {...}}, 'sources': {source_key: {param: str, ...}, ...}}``.
+    dict
+        ``{"defaults": {...}, "sources": {source_key: query_params}}``.
 
     Raises
     ------
     ZenodoMapperError
-        If the file is missing, not a dict, or fails validation.
+        If the file is missing, malformed, or missing a valid ``defaults`` section.
     """
     if not path.is_file():
         raise ZenodoMapperError(f"Zenodo sources config not found: {path}")
@@ -97,22 +92,11 @@ def load_source_config(path: Path = DEFAULT_SOURCES_PATH) -> dict[str, Any]:
         raise ZenodoMapperError(f"Invalid source query config format in {path}")
 
     sources = _parse_sources_section(data, path)
-
     defaults_section = data.get("defaults")
     if defaults_section is None or not isinstance(defaults_section, dict):
         raise ZenodoMapperError(f"Missing or invalid 'defaults' section in {path}")
-    group_section = defaults_section.get("group")
-    if not isinstance(group_section, dict):
-        raise ZenodoMapperError(f"Missing or invalid 'defaults.group' in {path}")
 
-    group_defaults: dict[str, str] = {}
-    for key in ("name", "title", "abstract", "description"):
-        value = group_section.get(key)
-        if not isinstance(value, str) or not value.strip():
-            raise ZenodoMapperError(f"defaults.group.{key} must be a non-empty string in {path}")
-        group_defaults[key] = value.strip()
-
-    return {"defaults": {"group": group_defaults}, "sources": sources}
+    return {"defaults": defaults_section, "sources": sources}
 
 
 def load_source_query_params(
@@ -168,7 +152,12 @@ def load_timestamp_state(path: Path = DEFAULT_TIMESTAMP_PATH) -> dict[str, Any]:
     return state
 
 
-def save_timestamp_state(state: dict[str, Any], path: Path = DEFAULT_TIMESTAMP_PATH) -> None:
+def save_timestamp_state(
+    state: dict[str, Any],
+    path: Path = DEFAULT_TIMESTAMP_PATH,
+    *,
+    enabled: bool = True,
+) -> None:
     """Write Zenodo timestamp JSON to disk.
 
     Parameters
@@ -177,10 +166,14 @@ def save_timestamp_state(state: dict[str, Any], path: Path = DEFAULT_TIMESTAMP_P
         Full timestamp document to serialize.
     path : pathlib.Path, optional
         Output path (default: :data:`DEFAULT_TIMESTAMP_PATH`).
+    enabled : bool, optional
+        When ``False``, the write is skipped (default: ``True``).
 
     Returns
     -------
     None
     """
+    if not enabled:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")

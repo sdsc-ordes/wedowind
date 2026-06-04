@@ -1,1 +1,1 @@
-"""CKAN → Databus mapper package (sources, manage_sources, publish CLIs)."""
+"""CKAN → OEP mapper (API helpers, OEMetadata mapping, publish CLIs)."""
