@@ -1,11 +1,13 @@
-"""OEP identifier sanitization for table and dataset names."""
+"""OEP identifier and keyword sanitization for table names and metadata."""
 
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from hashlib import sha1
 
 MAX_OEP_IDENTIFIER_LEN = 50
+MAX_OEP_KEYWORD_LEN = 40
 
 
 def sanitize_oep_identifier(value: str | None, *, fallback: str = "resource") -> str:
@@ -65,3 +67,55 @@ def cut_oep_identifier(value: str, *, max_length: int = MAX_OEP_IDENTIFIER_LEN) 
     if not stem:
         stem = "r"
     return f"{stem}_{suffix}"[:max_length]
+
+
+def sanitize_oep_keyword(value: str | None, *, max_length: int = MAX_OEP_KEYWORD_LEN) -> str:
+    """Truncate a metadata keyword to OEP's maximum length.
+
+    The OEP meta API rejects keywords longer than 40 characters. When a
+    keyword exceeds ``max_length``, :func:`cut_oep_identifier` shortens it
+    with a deterministic hash suffix.
+
+    Parameters
+    ----------
+    value : str or None
+        Raw keyword from a source record.
+    max_length : int, optional
+        Maximum keyword length (default :data:`MAX_OEP_KEYWORD_LEN`).
+
+    Returns
+    -------
+    str
+        Keyword at most ``max_length`` characters, or empty when ``value`` is
+        missing/blank.
+    """
+    keyword = str(value or "").strip()
+    if not keyword:
+        return ""
+    if len(keyword) <= max_length:
+        return keyword
+    return cut_oep_identifier(keyword, max_length=max_length)
+
+
+def sanitize_oep_keywords(keywords: Iterable[str] | None) -> list[str]:
+    """Sanitize OEMetadata ``keywords`` for OEP metadata upload.
+
+    Parameters
+    ----------
+    keywords : iterable of str or None
+        Raw keyword list from a source mapper.
+
+    Returns
+    -------
+    list[str]
+        Non-empty, de-duplicated keywords, each at most
+        :data:`MAX_OEP_KEYWORD_LEN` characters.
+    """
+    out: list[str] = []
+    seen: set[str] = set()
+    for keyword in keywords or []:
+        sanitized = sanitize_oep_keyword(keyword)
+        if sanitized and sanitized not in seen:
+            out.append(sanitized)
+            seen.add(sanitized)
+    return out

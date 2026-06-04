@@ -15,7 +15,7 @@ from mappers.ckan.helpers import (
 )
 from mappers.ckan.licenses import build_oemetadata_licenses_from_package
 from mappers.oep.oep_defaults import OepDefaults
-from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier
+from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier, sanitize_oep_keywords
 from mappers.oep.oemetadata_builder import OemetadataBuilder
 from mappers.oep.oemetadata import OemetadataContributor, OemetadataLicense, OemetadataResource
 from mappers.oep.oep_table import OepTable
@@ -224,8 +224,8 @@ class CKANToOepMapper:
             ),
             licenses=build_oemetadata_licenses_from_package(dataset),
             contributors=contributors_from_package(dataset),
-            keywords=list(
-                dict.fromkeys([oep.provenance_label, "ckan", f"ckan:{package_name}", *tag_names])
+            keywords=sanitize_oep_keywords(
+                [oep.provenance_label, "ckan", f"ckan:{package_name}", *tag_names]
             ),
             package_name=package_name,
             package_url=str(pkg_url) if pkg_url else None,

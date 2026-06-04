@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from mappers.oep.oep_defaults import OepDefaults
-from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier
+from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier, sanitize_oep_keywords
 from mappers.oep.oemetadata_builder import OemetadataBuilder
 from mappers.oep.oemetadata import OemetadataContributor, OemetadataLicense, OemetadataResource
 from mappers.oep.oep_table import OepTable
@@ -222,15 +222,13 @@ class ZenodoToOepMapper:
             publication_date=pub_date,
             licenses=build_oemetadata_licenses_from_metadata(metadata),
             contributors=contributors_from_metadata(metadata),
-            keywords=list(
-                dict.fromkeys(
-                    [
-                        oep.provenance_label,
-                        "zenodo",
-                        f"zenodo:{dataset_id}",
-                        *(str(k) for k in (metadata.get("keywords") or []) if k),
-                    ]
-                )
+            keywords=sanitize_oep_keywords(
+                [
+                    oep.provenance_label,
+                    "zenodo",
+                    f"zenodo:{dataset_id}",
+                    *(str(k) for k in (metadata.get("keywords") or []) if k),
+                ]
             ),
             dataset_slug=sanitize_oep_identifier(
                 str(record.get("id") or dataset_id), fallback="ds"
