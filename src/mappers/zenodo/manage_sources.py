@@ -122,7 +122,10 @@ def load_source_query_params(
     return load_source_config(path=path)["sources"]
 
 
-SOURCE_QUERY_PARAMS = load_source_query_params()
+try:
+    SOURCE_QUERY_PARAMS = load_source_query_params()
+except Exception:
+    SOURCE_QUERY_PARAMS = {}
 DEFAULT_TIMESTAMP_STATE = {
     source_key: copy.deepcopy(EMPTY_CHECKPOINT) for source_key in SOURCE_QUERY_PARAMS
 }
