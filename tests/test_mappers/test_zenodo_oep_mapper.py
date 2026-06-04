@@ -27,9 +27,8 @@ def test_zenodo_oep_mapper_builds_resources_and_dataset(monkeypatch: pytest.Monk
         "mappers.zenodo.client.ZenodoClient.get_record",
         lambda self, _id: record,
     )
-    oep = OepDefaults(table_prefix="wd_")
+    oep = OepDefaults(table_prefix="wd_", infer_schema=False)
     doc = ZenodoToOepMapper(source_key="test_src").map_to_oemetadata("99", oep)
-
     assert doc["title"] == "Wind dataset"
     assert len(doc["resources"]) == 1
     assert doc["resources"][0]["licenses"][0]["name"] == "CC-BY-4.0"
