@@ -54,7 +54,7 @@ class OemetadataBuilder:
         return " ".join(no_html.split())
 
     @staticmethod
-    def to_publication_date(value: str | None) -> str | None:
+    def parse_publication_date(value: str | None) -> str | None:
         """Normalize a timestamp or date string to ISO 8601 ``YYYY-MM-DD``.
 
         Parameters
@@ -84,7 +84,7 @@ class OemetadataBuilder:
         return None
 
     @staticmethod
-    def meta_metadata_block(version: str = "OEMetadata-2.0.4") -> dict[str, Any]:
+    def build_meta_metadata_block(version: str = "OEMetadata-2.0.4") -> dict[str, Any]:
         """Return the ``metaMetadata`` section for OEMetadata 2.0.
 
         Parameters
@@ -109,7 +109,7 @@ class OemetadataBuilder:
         }
 
     @staticmethod
-    def empty_schema_placeholder() -> dict[str, Any]:
+    def build_empty_schema_placeholder() -> dict[str, Any]:
         """Minimal ``schema`` when column definitions are not available from the source API.
 
         Returns
@@ -119,7 +119,7 @@ class OemetadataBuilder:
         """
         return {"fields": [], "primaryKey": []}
 
-    def oep_resource_path(self, topic: str, table_name: str) -> str:
+    def build_oep_resource_path(self, topic: str, table_name: str) -> str:
         """Build the OEP dataedit URL for a table (``path`` field; often read-only on OEP).
 
         Parameters
@@ -137,7 +137,7 @@ class OemetadataBuilder:
         topic_seg = sanitize_oep_identifier(topic, fallback="wind")
         return f"{self.OEP_BASE_URL}/dataedit/view/{topic_seg}/{table_name}"
 
-    def wedowind_context(self, oep: OepDefaults) -> OemetadataContext:
+    def build_wedowind_context(self, oep: OepDefaults) -> OemetadataContext:
         """Build the standard WeDoWind context block.
 
         Parameters
@@ -197,7 +197,7 @@ class OemetadataBuilder:
         contributors : list[OemetadataContributor] or None, optional
             Pre-built contributor entries. Default is ``None``.
         schema : dict[str, Any] or None, optional
-            OEMetadata schema; uses ``empty_schema_placeholder`` when
+            OEMetadata schema; uses ``build_empty_schema_placeholder`` when
             omitted. Default is ``None``.
         dialect : dict[str, str], OemetadataDialect, or None, optional
             CSV dialect settings. Default is ``OemetadataDialect()``.
@@ -229,16 +229,16 @@ class OemetadataBuilder:
         return OemetadataResource(
             name=table_name,
             title=title or table_name,
-            path=self.oep_resource_path(topic, table_name),
+            path=self.build_oep_resource_path(topic, table_name),
             description=description or "ToDo",
             topics=list(oep.topic),
             languages=list(oep.languages),
             subject=[dict(oep.subject)],
             keywords=keywords,
             publication_date=publication_date,
-            context=self.wedowind_context(oep),
+            context=self.build_wedowind_context(oep),
             licenses=licenses,
-            schema=schema if schema else self.empty_schema_placeholder(),
+            schema=schema if schema else self.build_empty_schema_placeholder(),
             dialect=dialect_obj,
             format=(file_format or "txt").upper()[:32],
             sources=resource_sources,
@@ -287,13 +287,13 @@ class OemetadataBuilder:
             "title": title or dataset_name,
             "description": description or "ToDo",
             "resources": resource_dicts,
-            "metaMetadata": self.meta_metadata_block(oep.metadata_version),
+            "metaMetadata": self.build_meta_metadata_block(oep.metadata_version),
         }
         if dataset_id_uri:
             doc["@id"] = dataset_id_uri
         return doc
 
-    def table_name_for_parts(
+    def build_table_name_for_parts(
         self,
         oep: OepDefaults,
         *,

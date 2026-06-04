@@ -211,7 +211,7 @@ class ZenodoToOepMapper:
             str(metadata.get("title") or record.get("title") or f"zenodo-{dataset_id}")
         )
         description = self.builder.normalize_plain_text(str(metadata.get("description") or ""))
-        pub_date = self.builder.to_publication_date(
+        pub_date = self.builder.parse_publication_date(
             str(metadata.get("publication_date") or record.get("created") or "")
         )
         doi = metadata.get("doi")
@@ -302,7 +302,7 @@ class ZenodoToOepMapper:
         schema, dialect = self._infer_resource_schema(url, fmt, file_key, oep)
 
         return self.builder.build_resource(
-            table_name=self.builder.table_name_for_parts(
+            table_name=self.builder.build_table_name_for_parts(
                 oep,
                 source_key=self.source_key,
                 dataset_key=context.dataset_slug,
@@ -363,7 +363,7 @@ class ZenodoToOepMapper:
                 "using placeholder schema",
                 flush=True,
             )
-            return OepTable.minimal_placeholder_schema(), None
+            return OepTable.build_minimal_placeholder_schema(), None
 
     def _build_sanitized_dataset_name(self, dataset_slug: str, oep: OepDefaults) -> str:
         """Build a sanitized OEMetadata dataset ``name`` for the record.

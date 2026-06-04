@@ -40,8 +40,8 @@ def test_oep_columns_adds_bigserial_id() -> None:
         ],
         "primaryKey": [],
     }
-    table = OepTable.from_oemetadata(name="placeholder", schema=schema)
-    columns = [column.to_api_dict() for column in table.columns]
+    table = OepTable.build_from_oemetadata(name="placeholder", schema=schema)
+    columns = [column.build_api_dict() for column in table.columns]
     assert columns[0]["name"] == "id"
     assert columns[0]["data_type"] == "bigserial"
     assert any(c["name"] == "capacity_mw" for c in columns)

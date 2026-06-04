@@ -219,7 +219,7 @@ class CKANToOepMapper:
         return _CkanDatasetContext(
             title=self.builder.normalize_plain_text(scalar_ckan_text(dataset.get("title"))),
             description=self.builder.normalize_plain_text(scalar_ckan_text(dataset.get("notes"))),
-            publication_date=self.builder.to_publication_date(
+            publication_date=self.builder.parse_publication_date(
                 str(dataset.get("metadata_created") or dataset.get("metadata_modified") or "")
             ),
             licenses=build_oemetadata_licenses_from_package(dataset),
@@ -290,7 +290,7 @@ class CKANToOepMapper:
         schema, dialect = self._infer_resource_schema(url, fmt, label, oep)
 
         return self.builder.build_resource(
-            table_name=self.builder.table_name_for_parts(
+            table_name=self.builder.build_table_name_for_parts(
                 oep,
                 source_key=self.source_key,
                 dataset_key=context.package_name,
@@ -351,7 +351,7 @@ class CKANToOepMapper:
                 "using placeholder schema",
                 flush=True,
             )
-            return OepTable.minimal_placeholder_schema(), None
+            return OepTable.build_minimal_placeholder_schema(), None
 
     def _build_sanitized_dataset_name(self, package_name: str, oep: OepDefaults) -> str:
         """Build a sanitized OEMetadata dataset ``name`` for the package.

@@ -61,7 +61,7 @@ class OepColumn:
     primary_key: bool = False
     is_nullable: bool | None = None
 
-    def to_api_dict(self) -> dict[str, Any]:
+    def build_api_dict(self) -> dict[str, Any]:
         """Serialize to an OEP table column definition for the REST API.
 
         Returns
@@ -146,7 +146,7 @@ class OepTable:
         return cut_oep_identifier(name, max_length=max_length)
 
     @staticmethod
-    def auth_headers(token: str) -> dict[str, str]:
+    def build_auth_headers(token: str) -> dict[str, str]:
         """Build OEP REST API authorization headers.
 
         Parameters
@@ -167,7 +167,7 @@ class OepTable:
         }
 
     @classmethod
-    def api_url_for(cls, table_name: str) -> str:
+    def get_api_url_for(cls, table_name: str) -> str:
         """Return the OEP tables API URL for a table name.
 
         Parameters
@@ -249,7 +249,7 @@ class OepTable:
         return out
 
     @classmethod
-    def minimal_placeholder_schema(cls) -> dict[str, Any]:
+    def build_minimal_placeholder_schema(cls) -> dict[str, Any]:
         """Schema for non-tabular sources: OEP table with auto ``id`` only.
 
         Returns
@@ -276,7 +276,7 @@ class OepTable:
         return cls.OEM_FIELD_TYPE_TO_OEP_DATA_TYPE.get(str(oem_type or "text").lower(), "text")
 
     @classmethod
-    def column_from_oem_field(cls, field_def: dict[str, Any]) -> OepColumn | None:
+    def build_column_from_oem_field(cls, field_def: dict[str, Any]) -> OepColumn | None:
         """Convert one OEMetadata schema field to an ``OepColumn``.
 
         Parameters
@@ -306,7 +306,7 @@ class OepTable:
         )
 
     @classmethod
-    def columns_from_schema(cls, schema: dict[str, Any]) -> list[OepColumn]:
+    def build_columns_from_schema(cls, schema: dict[str, Any]) -> list[OepColumn]:
         """Convert OEMetadata ``schema.fields`` to OEP column definitions.
 
         Parameters
@@ -338,7 +338,7 @@ class OepTable:
         for field_def in fields:
             if not isinstance(field_def, dict):
                 continue
-            column = cls.column_from_oem_field(field_def)
+            column = cls.build_column_from_oem_field(field_def)
             if column:
                 columns.append(column)
 
@@ -347,7 +347,7 @@ class OepTable:
         return columns
 
     @classmethod
-    def from_oemetadata(
+    def build_from_oemetadata(
         cls,
         *,
         name: str,
@@ -375,11 +375,11 @@ class OepTable:
             name=name,
             schema=sanitized_schema,
             format=(file_format or "txt").upper()[:32],
-            columns=cls.columns_from_schema(sanitized_schema),
+            columns=cls.build_columns_from_schema(sanitized_schema),
         )
 
     @classmethod
-    def from_oemetadata_dict(cls, resource: dict[str, Any]) -> OepTable:
+    def build_from_oemetadata_dict(cls, resource: dict[str, Any]) -> OepTable:
         """Build an OEP table from one OEMetadata resource dict.
 
         Parameters
@@ -393,13 +393,13 @@ class OepTable:
         OepTable
             Table built from the resource fields.
         """
-        return cls.from_oemetadata(
+        return cls.build_from_oemetadata(
             name=str(resource.get("name") or "").strip(),
             schema=resource.get("schema") if isinstance(resource.get("schema"), dict) else {},
             file_format=str(resource.get("format") or "csv"),
         )
 
-    def api_url(self) -> str:
+    def get_api_url(self) -> str:
         """Return this table's OEP REST API URL.
 
         Returns
@@ -407,9 +407,9 @@ class OepTable:
         str
             Full URL for ``GET``/``PUT /api/v0/tables/{name}/``.
         """
-        return self.api_url_for(self.name)
+        return self.get_api_url_for(self.name)
 
-    def put_payload(self) -> dict[str, Any]:
+    def build_put_payload(self) -> dict[str, Any]:
         """Build the JSON body for ``PUT /api/v0/tables/{name}/``.
 
         Returns
@@ -418,7 +418,7 @@ class OepTable:
             Payload with ``query.columns`` listing serialized column
             definitions.
         """
-        return {"query": {"columns": [column.to_api_dict() for column in self.columns]}}
+        return {"query": {"columns": [column.build_api_dict() for column in self.columns]}}
 
     def exists(self, session: requests.Session, *, token: str) -> bool:
         """Return whether the OEP table already exists.
@@ -436,8 +436,8 @@ class OepTable:
             ``True`` when the table endpoint responds with HTTP 200.
         """
         resp = session.get(
-            self.api_url(),
-            headers=self.auth_headers(token),
+            self.get_api_url(),
+            headers=self.build_auth_headers(token),
             timeout=self.API_TIMEOUT_S,
         )
         return resp.status_code == 200
@@ -466,9 +466,9 @@ class OepTable:
             flush=True,
         )
         resp = session.put(
-            self.api_url(),
-            json=self.put_payload(),
-            headers=self.auth_headers(token),
+            self.get_api_url(),
+            json=self.build_put_payload(),
+            headers=self.build_auth_headers(token),
             timeout=self.API_TIMEOUT_S,
         )
         if not resp.ok:
@@ -544,7 +544,7 @@ class OepTable:
                 ensured.append(table_name)
                 continue
 
-            table = cls.from_oemetadata_dict(res)
+            table = cls.build_from_oemetadata_dict(res)
 
             if skip_existing and table.exists(session, token=token):
                 print(f"[oep:table] Table {table_name!r} already exists; skip create", flush=True)
@@ -552,9 +552,9 @@ class OepTable:
                 continue
 
             if not inference.is_tabular_file_format(fmt) and not schema.get("fields"):
-                table = cls.from_oemetadata(
+                table = cls.build_from_oemetadata(
                     name=table_name,
-                    schema=cls.minimal_placeholder_schema(),
+                    schema=cls.build_minimal_placeholder_schema(),
                     file_format=fmt,
                 )
 
