@@ -48,5 +48,5 @@ def test_zenodo_oep_metadata_passes_omi_validation(monkeypatch: pytest.MonkeyPat
     )
     from mappers.oep.api import validate_oemetadata
 
-    doc = ZenodoToOepMapper(source_key="s").map_to_oemetadata("1", OepDefaults())
+    doc = ZenodoToOepMapper(source_key="s").map_to_oemetadata("1", OepDefaults(infer_schema=False))
     validate_oemetadata(doc)
