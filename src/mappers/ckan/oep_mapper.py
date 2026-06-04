@@ -128,7 +128,7 @@ class CKANToOepMapper:
         """
         dataset = self._fetch_package(dataset_id)
         context = self._build_dataset_context(dataset, dataset_id, oep)
-        resources = self._build_resources(self._mappable_resources(dataset, dataset_id), context, oep)
+        resources = self._build_resources(self._get_mappable_resources(dataset, dataset_id), context, oep)
 
         return self.builder.build_dataset_document(
             dataset_name=self._build_sanitized_dataset_name(context.package_name, oep),
@@ -158,7 +158,7 @@ class CKANToOepMapper:
             self._last_package = dataset
         return dataset
 
-    def _mappable_resources(self, dataset: dict[str, Any], dataset_id: str) -> list[dict[str, Any]]:
+    def _get_mappable_resources(self, dataset: dict[str, Any], dataset_id: str) -> list[dict[str, Any]]:
         """Return CKAN resources that have a download URL.
 
         Parameters
