@@ -80,10 +80,22 @@ def main() -> int:
     total_published = 0
     for source_key in sources:
         mapper = ZenodoToOepMapper(source_key=source_key)
-        records = mapper.client.fetch_source_records(source_key, page=1, size=args.page_size)
         source_state = state.get(source_key) or {}
+
+        page = 1
+        records: list[dict] = []
+        while True:
+            batch = mapper.client.fetch_source_records(source_key, page=page, size=args.page_size)
+            if not batch:
+                break
+            records.extend(batch)
+            page += 1
+
         hits = [
             r
+            for r in filter_new_datasets(records, source_state, overlap_hours=args.overlap_hours)
+            if str(r.get("id") or "").strip()
+        ]
             for r in filter_new_datasets(records, source_state, overlap_hours=args.overlap_hours)
             if str(r.get("id") or "").strip()
         ]
