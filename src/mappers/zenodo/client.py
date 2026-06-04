@@ -189,7 +189,7 @@ class ZenodoClient:
         """
         links = file_info.get("links")
         if isinstance(links, dict):
-            for key in ("self", "download", "content"):
+            for key in ("download", "content", "self"):
                 value = links.get(key)
                 if value:
                     return str(value)
