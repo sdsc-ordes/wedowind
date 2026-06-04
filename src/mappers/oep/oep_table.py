@@ -562,7 +562,8 @@ class OepTable:
 
             try:
                 table.create(session, token=token)
-            except OepTableProvisionError:
+            except OepTableProvisionError as err:
+                print(f"[oep:table] Failed to create table {table_name!r}: {err}", flush=True)
                 continue
             ensured.append(table_name)
 
