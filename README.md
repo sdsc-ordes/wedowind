@@ -14,7 +14,7 @@ Research Data Infrastructure for the WeDoWind community — publish wind-related
     - [CKAN (single dataset)](#ckan-single-dataset)
   - [How it works](#how-it-works)
     - [Architecture (class objects - simplified)](#architecture-class-objects---simplified)
-    - [Pipeline](#pipeline)
+    - [Pipeline from CLI to OEP publish](#pipeline-from-cli-to-oep-publish)
     - [OEMetadata composition](#oemetadata-composition)
       - [Phase 0 — Overview](#phase-0--overview)
       - [Phase 1 — Dataset-level (record/package) context extraction](#phase-1--dataset-level-recordpackage-context-extraction)
@@ -118,7 +118,7 @@ sequenceDiagram
 
 ### Architecture (class objects - simplified)
 
-### Pipeline
+### Pipeline from CLI to OEP publish
 
 Internal wedowind layers from CLI through OEP publish:
 
