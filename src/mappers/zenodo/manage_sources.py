@@ -176,11 +176,11 @@ def save_timestamp_state(
     -------
     None
     """
-if not enabled:
-    return
-path = Path(path)
-path.parent.mkdir(parents=True, exist_ok=True)
-payload = json.dumps(state, indent=2) + "\n"
-tmp = path.with_name(path.name + ".tmp")
-tmp.write_text(payload, encoding="utf-8")
-tmp.replace(path)
+    if not enabled:
+        return
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(state, indent=2) + "\n"
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(payload, encoding="utf-8")
+    tmp.replace(path)
