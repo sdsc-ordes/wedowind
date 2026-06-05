@@ -96,9 +96,6 @@ def main() -> int:
             for r in filter_new_datasets(records, source_state, overlap_hours=args.overlap_hours)
             if str(r.get("id") or "").strip()
         ]
-            for r in filter_new_datasets(records, source_state, overlap_hours=args.overlap_hours)
-            if str(r.get("id") or "").strip()
-        ]
 
         for idx, rec in enumerate(hits, start=1):
             dataset_id = str(rec.get("id") or "").strip()
