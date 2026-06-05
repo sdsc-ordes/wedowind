@@ -18,7 +18,7 @@ from mappers.oep.sanitize import (
 from mappers.oep.schema_inference import SchemaInference
 
 OEP_TABLE_TIMEOUT_S = 90
-MAX_OEP_COLUMN_NAME_LEN = 63
+MAX_OEP_COLUMN_NAME_LEN = MAX_OEP_IDENTIFIER_LEN
 
 OEM_FIELD_TYPE_TO_OEP_DATA_TYPE: dict[str, str] = {
     "text": "text",
@@ -207,7 +207,7 @@ class OepTable:
             safe = fallback
         if not safe[0].isalpha():
             safe = f"c_{safe}"
-        return safe[:cls.MAX_COLUMN_NAME_LEN].rstrip("_") or "column"
+        return cut_oep_identifier(safe, max_length=cls.MAX_COLUMN_NAME_LEN) or "column"
 
     @classmethod
     def sanitize_schema(cls, schema: dict[str, Any]) -> dict[str, Any]:

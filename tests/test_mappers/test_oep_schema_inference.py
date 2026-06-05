@@ -55,6 +55,12 @@ def test_sanitize_oep_column_name_enforces_oep_identifier_rules() -> None:
     numeric = OepTable.sanitize_column_name("2024 value")
     assert numeric.startswith("c_")
 
+    long_name = OepTable.sanitize_column_name(
+        "Wind Farm,Title,Alternative Title,Identity,Manufacturer,Model,Rating"
+    )
+    assert len(long_name) <= OepTable.MAX_COLUMN_NAME_LEN
+    assert long_name != "wind_farm_title_alternative_title_identity_manufacturer_model_r"
+
 
 def test_sanitize_oemetadata_schema_makes_unique_names() -> None:
     """Schema sanitization deduplicates conflicting field names."""
