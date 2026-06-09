@@ -44,7 +44,10 @@ def parse_iso_datetime(value: str | None) -> datetime | None:
     if normalized.endswith("Z"):
         normalized = normalized[:-1] + "+00:00"
     try:
-        return datetime.fromisoformat(normalized).astimezone(UTC)
+        dt = datetime.fromisoformat(normalized)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=UTC)
+        return dt.astimezone(UTC)
     except ValueError:
         pass
     # CKAN sometimes returns "YYYY-MM-DD HH:MM:SS(.fff)?" without a T separator.
