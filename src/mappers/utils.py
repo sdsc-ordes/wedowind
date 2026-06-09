@@ -94,31 +94,14 @@ def normalize_databus_multi_segment_path(path_fragment: str | None) -> str:
     return "/".join(parts) if parts else "account"
 
 
-def get_databus_identifier(
-    account_name: str, group: str, artifact_name: str, version: str | None = None
-):
-    """Build the HTTPS Databus identifier for account/group/artifact[/version].
+def get_databus_identifier(group_path: str, artifact_name: str, version: str | None = None):
+    """Build the HTTPS Databus identifier for group_path/artifact[/version].
 
-    Parameters
-    ----------
-    account_name : str
-        Multi-segment account path (normalized).
-    group : str
-        Group segment.
-    artifact_name : str
-        Artifact slug segment.
-    version : str or None, optional
-        Optional version segment appended when provided.
-
-    Returns
-    -------
-    str
-        Absolute HTTPS URI under :data:`mappers.databus.DATABUS_URI_BASE`.
+    group_path is typically the configured Databus group path, e.g. ``wedowind/zenodo``.
     """
-    account_path = normalize_databus_multi_segment_path(account_name)
-    group_seg = sanitize_databus_uri_segment(group, fallback="group")
+    group_path_norm = normalize_databus_multi_segment_path(group_path)
     artifact_seg = sanitize_databus_uri_segment(artifact_name, fallback="artifact")
-    identifier = f"{DATABUS_URI_BASE}/{account_path}/{group_seg}/{artifact_seg}"
+    identifier = f"{DATABUS_URI_BASE}/{group_path_norm}/{artifact_seg}"
     if version:
         identifier += f"/{sanitize_databus_uri_segment(version, fallback='v1')}"
     return identifier
