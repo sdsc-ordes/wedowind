@@ -2,13 +2,13 @@
 
 ## Intended Usage
 
-For some challenges, a datascience platform is needed. For challenges with big data or with private data from industry. 
+For some challenges, a datascience platform is needed. For challenges with big data or with private data from industry.
 
-Participants from challenges will log in and code in this space. 
+Participants from challenges will log in and code in this space.
 
 ## Requirements & Solution
 
-Platforms overviewed but not explored in depth due to lack of fit: 
+Platforms overviewed but not explored in depth due to lack of fit:
 
 - [ODAHUB](https://odahub.io) (astrophysics focused, unfriendly to beginner coders)
 - [OpenML](https://www.openml.org) (proprietary datasets and workflow, compatibility issues)
@@ -40,30 +40,30 @@ Platforms explored in detail with requirements: [Onyxia](https://datalab.sspclou
 | Python environments                                                                     |   Yes     |    Yes    |
 | Julia environments                                                                      |   Yes     |    Yes    |
 | R environments                                                                          |   Yes     |    Yes    |
-| Other languages (C++, Rust, Java, etc.)                                                 |   Yes     |    Yes    | 
-| Code Notebooks integration (Jupyter etc)                                                |   Yes     |    Yes    | 
-| Integration of workflow language(s) for code execution                                  |   Yes     |    Yes   | 
+| Other languages (C++, Rust, Java, etc.)                                                 |   Yes     |    Yes    |
+| Code Notebooks integration (Jupyter etc)                                                |   Yes     |    Yes    |
+| Integration of workflow language(s) for code execution                                  |   Yes     |    Yes   |
 | GitHub or GitLab Integration                                                            |   Yes     |    Yes (both)    |
 | Workflow managers                                                            |   Yes     |    Not at the moment   |
 | **Compute**                                                                              |        |        |
 | Possibility to execute lightweight code (e.g. 2CPUs, 8GB RAM), directly on the platform |  Yes      |   Yes (Free Tier is probably sufficient)     |
 | Possibility to set up external HPC usage                                               |   No     |    Work ongoing. *HPC    |
 
-*P: Private Data / Code: 
+*P: Private Data / Code:
 
 - s3 buckets closed off and user specific. If an admin wants to give access to s3 bucket then the credentials are passed around outside renku platform.
 - Same logic for for github repository that is private. Need to connect github account then renku checks if the user has access to a repo
 
-*HPC: 
+*HPC:
 
-- several collaborations also require it. By end of year have some features available. 
+- several collaborations also require it. By end of year have some features available.
 - Side-note: in ~1month. Being able to connect to personal cloud services: example with Microsoft Azure resources.
 
 ## Conclusion
 
 From the current scoping. Renku platform seems to match more requirements than Onyxia platform. The main reasons are:
 
-- Onyxia underlines they do not cater to hosting proprietary data 
+- Onyxia underlines they do not cater to hosting proprietary data
 - lack of integration to Zenodo
 - lack of integration of HPC
 
