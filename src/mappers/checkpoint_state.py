@@ -60,7 +60,10 @@ def parse_iso_datetime(value: str | None) -> datetime | None:
     ):
         alt = normalized.replace(" ", "T", 1)
         try:
-            return datetime.fromisoformat(alt).astimezone(UTC)
+            dt = datetime.fromisoformat(alt)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=UTC)
+            return dt.astimezone(UTC)
         except ValueError:
             return None
     return None
