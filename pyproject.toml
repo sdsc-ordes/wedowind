@@ -8,7 +8,8 @@ dependencies = [
     "databusclient>=0.15",
     "jsonschema>=4.23",
     "python-dotenv>=1.0",
-    "ckanapi"
+    "ckanapi",
+    "requests>=2.31",
 ]
 
 [dependency-groups]
