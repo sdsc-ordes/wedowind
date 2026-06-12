@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,12 +15,14 @@ from mappers.ckan.helpers import (
     scalar_ckan_text,
 )
 from mappers.ckan.licenses import build_oemetadata_licenses_from_package
-from mappers.oep.oep_defaults import OepDefaults
-from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier, sanitize_oep_keywords
-from mappers.oep.oemetadata_builder import OemetadataBuilder
 from mappers.oep.oemetadata import OemetadataContributor, OemetadataLicense, OemetadataResource
+from mappers.oep.oemetadata_builder import OemetadataBuilder
+from mappers.oep.oep_defaults import OepDefaults
 from mappers.oep.oep_table import OepTable
+from mappers.oep.sanitize import cut_oep_identifier, sanitize_oep_identifier, sanitize_oep_keywords
 from mappers.oep.schema_inference import SchemaInference, SchemaInferenceError
+
+_log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -346,10 +349,9 @@ class CKANToOepMapper:
                 label=label,
             )
         except SchemaInferenceError as err:
-            print(
-                f"[ckan:oep] schema infer failed for {label!r}: {err}; "
-                "using placeholder schema",
-                flush=True,
+            _log.warning(
+                "schema inference failed for %r (url=%s): %s — publishing with placeholder schema (id column only)",
+                label, url, err,
             )
             return OepTable.build_minimal_placeholder_schema(), None
 

@@ -7,3 +7,9 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .eggs/
+
+# Agent files
+
+.agents/
+AGENTS.md
+CLAUDE.md
