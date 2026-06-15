@@ -31,7 +31,7 @@ Github organization allow:
 - projects, issue tracking etc.
 - assignment of moderators
 
-### Repository templates 
+### Repository templates
 
 Repository templates help to standardize contributions to ensure any wedowind project/contribution contains a license, code of conduct, etc. or can be used to distribute common code elements that help to get started. They can be used on the organizational or subspace (e.g. challenge) level.
 

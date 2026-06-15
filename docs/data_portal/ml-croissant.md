@@ -12,13 +12,13 @@ In contrast to other dataset vocabularies (e.g. DCAT) and repositories (e.g. CKA
 ML-Croissant builds on [schema.org/Dataset](https://schema.org/Dataset) with extension for ML usage.
 The format has four layer:
 
-- __Metadata__: 
+- __Metadata__:
 Contains general information about the dataset, such as its name, description and license.
-- __Resources__: 
-Describes the source data included in the dataset. 
-- __Structure__: 
+- __Resources__:
+Describes the source data included in the dataset.
+- __Structure__:
 Describes and organizes the structure of the resources.
-- __(ML) Semantics__: 
+- __(ML) Semantics__:
 ML-specific data interpretations, including custom data types (e.g., bounding boxes) and dataset organization methods (e.g., train/test splits).
 
 
@@ -37,7 +37,7 @@ Provides a general mechanism to attach semantics to data by linking to known voc
 
 ## Integrations
 - [Google Dataset search](https://datasetsearch.research.google.com/) provides a croissant filter.
-- [Kaggle dataset](https://www.kaggle.com/datasets) metadata can be downloaded in Croissant JSON-LD. 
+- [Kaggle dataset](https://www.kaggle.com/datasets) metadata can be downloaded in Croissant JSON-LD.
 - [OpenML dataset](https://www.openml.org/search?type=data) metadata can be downloaded in Croissant JSON-LD.
 - [Hugging face dataset](https://huggingface.co/datasets) metadata can be downloaded in Croissant JSON-LD.
 - [CKAN](https://ckan.org/) supports Croissant format.
@@ -63,7 +63,5 @@ Provides a general mechanism to attach semantics to data by linking to known voc
 
 **NOTE**: You can also upload a croissant json-ld file together with the dataset using the huggingface python api by including the croissant json-ld file into the dataset folder.
 
-### [`CroissantBuilder()`](https://www.tensorflow.org/datasets/format_specific_dataset_builders#croissantbuilder): 
+### [`CroissantBuilder()`](https://www.tensorflow.org/datasets/format_specific_dataset_builders#croissantbuilder):
 - generate [TensorFlow datasets](https://www.tensorflow.org/datasets/overview) from Croissant format.
-
-

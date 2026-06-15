@@ -1,0 +1,77 @@
+name: Monthly OEP publish
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run in dry-run mode for all jobs"
+        required: true
+        default: "true"
+
+jobs:
+  publish-zenodo-oep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - run: uv sync --frozen --all-groups
+
+      - name: Publish Zenodo sources to OEP
+        env:
+          OEP_API_TOKEN: ${{ secrets.OEP_API_TOKEN }}
+          ZENODO_ACCESS_TOKEN: ${{ secrets.ZENODO_ACCESS_TOKEN }}
+        run: |
+          DRY_ARGS=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_ARGS="--dry-run"
+          fi
+          uv run python -m mappers.zenodo.publish_sources $DRY_ARGS
+
+      - name: Commit timestamp updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/mappers/zenodo/config/timestamp.json
+          git diff --cached --quiet || (git commit -m "chore: update zenodo OEP timestamp" && git push)
+
+  publish-ckan-oep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - run: uv sync --frozen --all-groups
+
+      - name: Publish CKAN sources to OEP
+        env:
+          OEP_API_TOKEN: ${{ secrets.OEP_API_TOKEN }}
+        run: |
+          DRY_ARGS=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_ARGS="--dry-run"
+          fi
+          uv run python -m mappers.ckan.publish_sources $DRY_ARGS
+
+      - name: Commit timestamp updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/mappers/ckan/config/timestamp.json
+          git diff --cached --quiet || (git commit -m "chore: update ckan OEP timestamp" && git push)
